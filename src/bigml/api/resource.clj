@@ -13,7 +13,8 @@
   (str api-base "/" api-version "/" (name resource-type)))
 
 (defn- resource-url [resource]
-  (str api-base "/" api-version "/" resource))
+  (let [resource (if (map? resource) (:resource resource) resource)]
+    (str api-base "/" api-version "/" resource)))
 
 (defn query-params [& {:keys [username api_key] :as params}]
   (let [env (System/getenv)
@@ -45,8 +46,7 @@
   "Updates the specified resource.  Returns the updated resource upon
    success."
   [resource updates & params]
-  (let [resource (if (map? resource) (:resource resource) resource)
-        {:keys [status body]}
+  (let [{:keys [status body]}
         (client/put (resource-url resource)
                     {:query-params (apply query-params params)
                      :form-params updates
@@ -57,15 +57,13 @@
 (defn delete
   "Deletes the specified resource.  Returns nil upon success."
   [resource & params]
-  (let [resource (if (map? resource) (:resource resource) resource)]
-    (when (client/delete (resource-url resource)
-                         {:query-params (apply query-params params)}))))
+  (when (client/delete (resource-url resource)
+                       {:query-params (apply query-params params)})))
 
 (defn get
   "Retrieves a resource."
   [resource & params]
-  (let [resource (if (map? resource) (:resource resource) resource)
-        {:keys [status body]}
+  (let [{:keys [status body]}
         (client/get (resource-url resource)
                     {:query-params (apply query-params params)
                      :as :json})]
