@@ -9,7 +9,7 @@
             (clojure.data [json :as json]
                           [csv :as csv])
             (bigml.api [resource :as resource]))
-  (:refer-clojure :exclude [get list]))
+  (:refer-clojure :exclude [list]))
 
 (defn- url? [url]
   (.isValid (UrlValidator.) url))
@@ -65,19 +65,3 @@
   "Retrieves a list of data sources."
   [& params]
   (apply resource/list :source params))
-
-(defn update
-  "Updates the specified data source.  Returns the updated source upon
-   success."
-  [source updates & params]
-  (apply resource/update source updates params))
-
-(defn get
-  "Retrieves a data source."
-  [source & params]
-  (apply resource/get source params))
-
-(defn delete
-  "Deletes the specified data source.  Returns nil upon success."
-  [source & params]
-  (apply resource/delete source params))

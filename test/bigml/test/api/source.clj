@@ -3,19 +3,20 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.test.api.source
-  (:require (bigml.api [source :as source]))
+  (:require (bigml.api [resource :as resource]
+                       [source :as source]))
   (:use clojure.test))
 
 (defn- create-and-test [artifact & params]
   (let [initial (apply source/create artifact params)
         source-name (str "test-source" (rand-int 1000))
-        updated (source/update initial {:name source-name})
+        updated (resource/update initial {:name source-name})
         _ (Thread/sleep 1000)
-        retrieved (source/get updated)
-        deleted (source/delete retrieved)]
+        retrieved (resource/get updated)
+        deleted (resource/delete retrieved)]
     (is (and initial updated retrieved))
     (is (nil? deleted))
-    (is (thrown? Exception (source/get initial)))
+    (is (thrown? Exception (resource/get initial)))
     (is (= source-name (:name updated) (:name retrieved)))))
 
 (deftest sources

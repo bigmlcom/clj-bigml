@@ -9,12 +9,16 @@
 (def ^:private api-version "andromeda")
 (def ^:private api-base "https://bigml.io")
 
+(defn location
+  "Returns the resource location."
+  [resource]
+  (if (map? resource) (:resource resource) resource))
+
 (defn- resource-type-url [resource-type]
   (str api-base "/" api-version "/" (name resource-type)))
 
 (defn- resource-url [resource]
-  (let [resource (if (map? resource) (:resource resource) resource)]
-    (str api-base "/" api-version "/" resource)))
+  (str api-base "/" api-version "/" (location resource)))
 
 (defn query-params [& {:keys [username api_key] :as params}]
   (let [env (System/getenv)
@@ -68,3 +72,33 @@
                     {:query-params (apply query-params params)
                      :as :json})]
     (with-meta body {:http-status status})))
+
+(defn status-code
+  "Return the status code of the resource as a keyword."
+  [resource]
+  ({0 :waiting 1 :queued 2 :started 3 :in-progress 4 :summarized
+    5 :finished -1 :faulty -2 :unknown -3 :runnable}
+   (:code (:status resource))))
+
+(defn finished?
+  "Returns true if the resource's status is finished."
+  [resource]
+  (= :finished (status-code resource)))
+
+(defn final?
+  "Returns true if the resource is final, meaning either finished or
+  an error state (faulty, unknown, and runnable)."
+  [resource]
+  (#{:finished :faulty :unknown :runnable} (status-code resource)))
+
+(def ^:private decay-rate 1.618)
+
+(defn get-final
+  "Retries GETs to the resource until it is finished."
+  [resource & params]
+  (loop [sleep-time 500]
+    (let [result (apply get resource params)]
+      (if (final? result)
+        result
+        (do (Thread/sleep (long sleep-time))
+            (recur (* decay-rate sleep-time)))))))
