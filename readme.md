@@ -19,4 +19,4 @@ in our [Campfire chatroom](https://bigmlinc.campfirenow.com/f20a0).
 
 Copyright (C) 2012 BigML Inc.
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Distributed under the Apache License, Version 2.0.
