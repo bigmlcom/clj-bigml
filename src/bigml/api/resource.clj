@@ -92,13 +92,15 @@
   (#{:finished :faulty :unknown :runnable} (status-code resource)))
 
 (def ^:private decay-rate 1.618)
+(def ^:private init-wait 500)
+(def ^:private max-wait 120000)
 
 (defn get-final
-  "Retries GETs to the resource until it is finished."
+  "Retries GETs to the resource until it is finalized."
   [resource & params]
-  (loop [sleep-time 500]
+  (loop [sleep-time init-wait]
     (let [result (apply get resource params)]
       (if (final? result)
         result
         (do (Thread/sleep (long sleep-time))
-            (recur (min (* decay-rate sleep-time) 120000)))))))
+            (recur (min max-wait (* decay-rate sleep-time))))))))
