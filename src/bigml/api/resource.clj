@@ -101,4 +101,4 @@
       (if (final? result)
         result
         (do (Thread/sleep (long sleep-time))
-            (recur (* decay-rate sleep-time)))))))
+            (recur (min (* decay-rate sleep-time) 120000)))))))
