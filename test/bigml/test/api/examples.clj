@@ -54,7 +54,7 @@
       (println "Cleaning up by deleting the resources from BigML")
       (api/delete source)
       (api/delete dataset)
-      (mapv api/delete models))))
+      (doall (pmap api/delete models)))))
 
 
 (defn- train-and-test-example []
@@ -84,4 +84,4 @@
                (:accuracy (:model (:result evaluation))))
 
       (println "Cleaning up by deleting the resources from BigML")
-      (mapv api/delete [source dataset model evaluation]))))
+      (doall (pmap api/delete [source dataset model evaluation])))))

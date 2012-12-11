@@ -11,10 +11,6 @@
                        [evaluation :as evaluation]))
   (:use clojure.test))
 
-(def ^:private data
-  (for [i (range 10) j (range 10)]
-    [i j (+ i j)]))
-
 (defn test-with-generated-data []
   (let [data (for [i (range 10) j (range 10)]
                [i j (+ i j)])
@@ -24,7 +20,7 @@
         pred (prediction/create model (first data))
         eval (api/get-final (evaluation/create model dataset))
         predictor (model/predictor model)]
-    (doall (map api/delete [source dataset model pred eval]))
+    (doall (pmap api/delete [source dataset model pred eval]))
     (is (== 10 (predictor [8 2]) (predictor [5 5])))
     (is source)
     (is dataset)
