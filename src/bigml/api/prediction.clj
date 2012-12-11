@@ -3,39 +3,34 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.prediction
-  (:require (bigml.api [resource :as resource]))
+  (:require (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
-
-(defn- convert-inputs [model inputs]
-  (let [input-fields (or (:input_fields model)
-                         (:input_fields (resource/get-final model))
-                         (throw (Exception. "Unaccessable model")))]
-    (apply hash-map (flatten (map clojure.core/list input-fields inputs)))))
 
 (defn create
   "Creates a prediction."
   [model inputs & params]
   (let [inputs (if (and (not (map? inputs)) (coll? inputs))
-                 (convert-inputs model inputs)
+                 (api/convert-inputs model inputs)
                  inputs)
-        params (apply resource/query-params params)
-        form-params (assoc (dissoc params :username :api_key)
-                      :model (resource/location model)
+        params (apply api/query-params params)
+        form-params (assoc (apply dissoc params api/conn-params)
+                      :model (api/location model)
                       :input_data inputs)
-        auth-params (select-keys params [:username :api_key])]
-    (resource/create :prediction
-                     {:content-type :json
-                      :form-params form-params
-                      :query-params auth-params})))
+        auth-params (select-keys params api/auth-params)]
+    (api/create :prediction
+                (:dev_mode params)
+                {:content-type :json
+                 :form-params form-params
+                 :query-params auth-params})))
 
 (defn list
   "Retrieves a list of predictions."
   [& params]
-  (apply resource/list :prediction params))
+  (apply api/list :prediction params))
 
 (defn output
   "Returns the prediction output."
   [prediction]
-  (let [output-fn #(first (vals (:prediction %)))
-        output (output-fn prediction)]
-    (if output output (output-fn (resource/get-final prediction)))))
+  (let [output-fn #(first (vals (:prediction %)))]
+    (or (output-fn prediction)
+        (output-fn (api/get-final prediction)))))

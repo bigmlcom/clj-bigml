@@ -3,7 +3,7 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.test.api.integration
-  (:require (bigml.api [resource :as resource]
+  (:require (bigml.api [core :as api]
                        [source :as source]
                        [dataset :as dataset]
                        [model :as model]
@@ -11,23 +11,30 @@
                        [evaluation :as evaluation]))
   (:use clojure.test))
 
-(defn- generate-row [cols]
-  (let [inputs (vec (repeatedly (dec cols) #(rand-int 100)))]
-    (conj inputs (reduce + inputs))))
+(def ^:private data
+  (for [i (range 10) j (range 10)]
+    [i j (+ i j)]))
 
-(defn- generate-data [rows cols]
-  (repeatedly rows #(generate-row cols)))
-
-(deftest integration
-  (let [data (generate-data 100 3)
-        source (resource/get-final (source/create data))
-        dataset (resource/get-final (dataset/create source))
-        model (resource/get-final (model/create dataset))
+(defn test-with-generated-data []
+  (let [data (for [i (range 10) j (range 10)]
+               [i j (+ i j)])
+        source (api/get-final (source/create data))
+        dataset (api/get-final (dataset/create source))
+        model (api/get-final (model/create dataset))
         pred (prediction/create model (first data))
-        eval (resource/get-final (evaluation/create model dataset))]
-    (doall (map resource/delete [source dataset model pred eval]))
+        eval (api/get-final (evaluation/create model dataset))
+        predictor (model/predictor model)]
+    (doall (map api/delete [source dataset model pred eval]))
+    (is (== 10 (predictor [8 2]) (predictor [5 5])))
     (is source)
     (is dataset)
     (is model)
     (is pred)
     (is eval)))
+
+(deftest integration
+  (test-with-generated-data))
+
+(deftest dev-mode-integration
+  (binding [api/*dev-mode* true]
+    (test-with-generated-data)))

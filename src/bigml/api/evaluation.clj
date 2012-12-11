@@ -3,23 +3,24 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.evaluation
-  (:require (bigml.api [resource :as resource]))
+  (:require (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
 
 (defn create
   "Creates an evaluation."
   [model dataset & params]
-  (let [params (apply resource/query-params params)
-        form-params (assoc (dissoc params :username :api_key)
-                      :model (resource/location model)
-                      :dataset (resource/location dataset))
-        auth-params (select-keys params [:username :api_key])]
-    (resource/create :evaluation
-                     {:content-type :json
-                      :form-params form-params
-                      :query-params auth-params})))
+  (let [params (apply api/query-params params)
+        form-params (assoc (apply dissoc params api/conn-params)
+                      :model (api/location model)
+                      :dataset (api/location dataset))
+        auth-params (select-keys params api/auth-params)]
+    (api/create :evaluation
+                (:dev_mode params)
+                {:content-type :json
+                 :form-params form-params
+                 :query-params auth-params})))
 
 (defn list
   "Retrieves a list of evaluations."
   [& params]
-  (apply resource/list :evaluation params))
+  (apply api/list :evaluation params))

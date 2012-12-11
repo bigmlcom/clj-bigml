@@ -8,7 +8,7 @@
   (:require (clojure.java [io :as io])
             (clojure.data [json :as json]
                           [csv :as csv])
-            (bigml.api [resource :as resource]))
+            (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
 
 (defn- url? [url]
@@ -20,48 +20,53 @@
         (instance? File v) :file
         (string? v) :file))
 
-(defmulti create create-type)
+(defmulti create "ADAM - Foo and bar" create-type)
 
 (defmethod create :url [url & params]
-  (let [params (apply resource/query-params params)
-        form-params (assoc (dissoc params :username :api_key) :remote url)
-        auth-params (select-keys params [:username :api_key])]
-    (resource/create :source
-                     {:content-type :json
-                      :form-params form-params
-                      :query-params auth-params})))
+  (let [params (apply api/query-params params)
+        form-params (assoc (apply dissoc params api/conn-params) :remote url)
+        auth-params (select-keys params api/auth-params)]
+    (api/create :source
+                (:dev_mode params)
+                {:content-type :json
+                 :form-params form-params
+                 :query-params auth-params})))
 
 (defmethod create :file [file & params]
   (let [file (io/file file)
-        params (apply resource/query-params params)
-        form-params (dissoc params :username :api_key)
-        auth-params (select-keys params [:username :api_key])
+        params (apply api/query-params params)
+        form-params (apply dissoc params api/conn-params)
+        auth-params (select-keys params api/auth-params)
         multipart (map (fn [[k v]] {:name (name k)
                                     :content (if (map? v)
                                                (json/json-str v)
                                                (str v))})
                        form-params)
         multipart (conj multipart {:name "file" :content file})]
-    (resource/create :source
-                     {:multipart multipart
-                      :query-params auth-params})))
+    (api/create :source
+                (:dev_mode params)
+                {:multipart multipart
+                 :query-params auth-params})))
 
 (defmethod create :collection [coll & params]
   (with-open [writer (StringWriter.)]
     (csv/write-csv writer coll)
-    (let [params (apply resource/query-params params)
-          form-params (assoc (dissoc params :username :api_key)
+    (let [params (apply api/query-params params)
+          form-params (assoc (apply dissoc params api/conn-params)
                         :data (str writer))
-          auth-params (select-keys params [:username :api_key])]
-      (resource/create :source
-                       {:content-type :json
-                        :form-params form-params
-                        :query-params auth-params}))))
+          auth-params (select-keys params api/auth-params)]
+      (api/create :source
+                  (:dev_mode params)
+                  {:content-type :json
+                   :form-params form-params
+                   :query-params auth-params}))))
 
 (defmethod create :default [& _]
   (throw (Exception. "Unrecognized artifact for source creation.")))
 
 (defn list
-  "Retrieves a list of data sources."
+  "Retrieves a list of data sources. Optional parameters are supported
+   for pagination and filtering.  Details are available here:
+     https://bigml.com/developers/sources#s_list"
   [& params]
-  (apply resource/list :source params))
+  (apply api/list :source params))
