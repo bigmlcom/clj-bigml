@@ -3,6 +3,8 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.dataset
+  "Offers functions specific for BigML datasets.
+      https://bigml.com/developers/datasets"
   (:require (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
 

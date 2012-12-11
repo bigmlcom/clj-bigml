@@ -3,6 +3,8 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.prediction
+  "Offers functions specific for BigML predictions.
+      https://bigml.com/developers/predictions"
   (:require (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
 

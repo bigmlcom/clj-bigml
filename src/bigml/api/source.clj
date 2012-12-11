@@ -3,6 +3,8 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.source
+  "Offers functions specific for BigML sources.
+      https://bigml.com/developers/sources"
   (:import (java.io ByteArrayInputStream File StringWriter)
            (org.apache.commons.validator.routines UrlValidator))
   (:require (clojure.java [io :as io])

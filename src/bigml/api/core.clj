@@ -3,6 +3,7 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.core
+  "Offers generic functions for interacting with BigML resources."
   (:require (clj-http [client :as client]))
   (:refer-clojure :exclude [get list]))
 
@@ -29,7 +30,8 @@
   (let [env (System/getenv)
         username (or username *username* (clojure.core/get env "BIGML_USERNAME"))
         api_key (or api_key *api-key* (clojure.core/get env "BIGML_API_KEY"))
-        dev_mode (or dev_mode *dev-mode* (clojure.core/get env "BIGML_DEV_MODE"))]
+        dev_mode (or dev_mode *dev-mode*
+                     (Boolean/valueOf (clojure.core/get env "BIGML_DEV_MODE")))]
     (if (and username api_key)
       (assoc params :username username :api_key api_key :dev_mode dev_mode)
       (throw (Exception. "No authentication defined.")))))

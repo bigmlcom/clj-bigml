@@ -3,6 +3,8 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.model
+  "Offers functions specific for BigML models.
+      https://bigml.com/developers/models"
   (:require (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
 

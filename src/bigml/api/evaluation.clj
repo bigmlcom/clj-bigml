@@ -3,6 +3,8 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.evaluation
+  "Offers functions specific for BigML evaluations.
+      https://bigml.com/developers/evaluations"
   (:require (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
 
