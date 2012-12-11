@@ -20,7 +20,13 @@
         (instance? File v) :file
         (string? v) :file))
 
-(defmulti create "ADAM - Foo and bar" create-type)
+(defmulti create
+  "Creates a source given either a url, a file, or a sequence of
+   sequences (each inner sequence representing a row, and intended for
+   small amounts of data).  Accepts the optional creation parameters
+   defined in the BigML API docs:
+      https://bigml.com/developers/sources#s_create"
+  create-type)
 
 (defmethod create :url [url & params]
   (let [params (apply api/query-params params)
@@ -66,7 +72,7 @@
 
 (defn list
   "Retrieves a list of data sources. Optional parameters are supported
-   for pagination and filtering.  Details are available here:
-     https://bigml.com/developers/sources#s_list"
+   for pagination and filtering. Details are available here:
+      https://bigml.com/developers/sources#s_list"
   [& params]
   (apply api/list :source params))

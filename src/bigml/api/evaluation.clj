@@ -7,7 +7,9 @@
   (:refer-clojure :exclude [list]))
 
 (defn create
-  "Creates an evaluation."
+  "Creates an evaluation given a model and a dataset. Accepts the
+   optional creation parameters defined in the BigML API docs:
+      https://bigml.com/developers/evaluations#e_create"
   [model dataset & params]
   (let [params (apply api/query-params params)
         form-params (assoc (apply dissoc params api/conn-params)
@@ -21,6 +23,8 @@
                  :query-params auth-params})))
 
 (defn list
-  "Retrieves a list of evaluations."
+  "Retrieves a list of evaluations. Optional parameters are supported
+   for pagination and filtering.  Details are available here:
+      https://bigml.com/developers/evaluations#e_list"
   [& params]
   (apply api/list :evaluation params))

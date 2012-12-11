@@ -71,8 +71,15 @@
       (with-meta objects (assoc meta :http-status status)))))
 
 (defn update
-  "Updates the specified resource.  Returns the updated resource upon
-   success."
+  "Updates the specified resource given a map of attributes to be
+   updated.  Returns the updated resource upon success. The valid
+   attributes for updating are listed in the BigML API docs according
+   to resource type:
+      Sources     - https://bigml.com/developers/sources#s_update
+      Datasets    - https://bigml.com/developers/datasets#d_update
+      Models      - https://bigml.com/developers/models#m_update
+      Predictions - https://bigml.com/developers/predictions#p_update
+      Evaluations - https://bigml.com/developers/evaluations#e_update"
   [resource updates & params]
   (let [params (apply query-params params)
         {:keys [status body]}

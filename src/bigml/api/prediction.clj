@@ -7,7 +7,15 @@
   (:refer-clojure :exclude [list]))
 
 (defn create
-  "Creates a prediction."
+  "Creates a prediction given a model and the field inputs.
+
+   The inputs may either be a map (field ids to values), or a
+   sequence of the inputs fields in the order they appeared during
+   training.
+
+   This function also accepts the optional creation parameters defined
+   in the BigML API docs:
+      https://bigml.com/developers/predictions#p_create"
   [model inputs & params]
   (let [inputs (if (and (not (map? inputs)) (coll? inputs))
                  (api/convert-inputs model inputs)
@@ -24,7 +32,9 @@
                  :query-params auth-params})))
 
 (defn list
-  "Retrieves a list of predictions."
+  "Retrieves a list of predictions. Optional parameters are supported
+   for pagination and filtering.  Details are available here:
+      https://bigml.com/developers/predictions#p_list"
   [& params]
   (apply api/list :prediction params))
 

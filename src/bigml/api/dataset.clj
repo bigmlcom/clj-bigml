@@ -7,7 +7,9 @@
   (:refer-clojure :exclude [list]))
 
 (defn create
-  "Creates a dataset."
+  "Creates a dataset given a source. Accepts the optional creation
+   parameters defined in the BigML API docs:
+      https://bigml.com/developers/datasets#d_create"
   [source & params]
   (let [params (apply api/query-params params)
         form-params (assoc (apply dissoc params api/conn-params)
@@ -20,6 +22,8 @@
                  :query-params auth-params})))
 
 (defn list
-  "Retrieves a list of datasets."
+  "Retrieves a list of datasets. Optional parameters are supported
+   for pagination and filtering. Details are available here:
+      https://bigml.com/developers/datasets#d_list"
   [& params]
   (apply api/list :dataset params))

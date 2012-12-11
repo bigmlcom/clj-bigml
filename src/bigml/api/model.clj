@@ -7,12 +7,9 @@
   (:refer-clojure :exclude [list]))
 
 (defn create
-  "Creates a model given a dataset. Optional parameters for model
-   creation can be added, for example:
-   (create my-dataset :stat_pruning true :sample_rate 0.6)
-
-   For details on model creation options see:
-     https://bigml.com/developers/models#m_create"
+  "Creates a model given a dataset. Accepts the optional creation
+   parameters defined in the BigML API docs:
+      https://bigml.com/developers/models#m_create"
   [dataset & params]
   (let [params (apply api/query-params params)
         form-params (assoc (apply dissoc params api/conn-params)
@@ -27,7 +24,7 @@
 (defn list
   "Retrieves a list of models. Optional parameters are supported for
    pagination and filtering.  Details are available here:
-     https://bigml.com/developers/models#m_list"
+      https://bigml.com/developers/models#m_list"
   [& params]
   (apply api/list :model params))
 
@@ -58,14 +55,14 @@
 
 (defn predictor
   "Returns the model as a function for making predictions locally.
-  The returned function expects either a map of inputs (field ids to
-  values), or a sequence of the input features in the order they
-  appeared during training.
+   The returned function expects either a map of inputs (field ids to
+   values), or a sequence of the input fields in the order they
+   appeared during training.
 
-  The generated fn will also accept optional parameters:
-    :details - When false, returns only the prediction output value.
-               When true, returns a map of values including output,
-               count, confidence, and the objective summary."
+   The generated fn will also accept optional parameters:
+     :details - When false, returns only the prediction output value.
+                When true, returns a map including output, count,
+                confidence, and the objective summary."
   [model]
   (let [model (if (get-root model) model (api/get model))
         root-fn (or (node-fn (get-root model))
