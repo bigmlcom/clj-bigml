@@ -69,7 +69,7 @@
           source (api/get-final (source/create "test/data/iris.csv.gz"))
           dataset (api/get-final (dataset/create source))
 
-          _ (println "Training a model using 2/3 of the data")
+          _ (println "Training a pruned tree using 2/3 of the data")
           model (api/get-final (model/create dataset
                                              :sample_rate 0.66
                                              :seed "iris-test"
