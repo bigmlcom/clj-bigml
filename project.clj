@@ -1,4 +1,4 @@
-(defproject clj-bigml "0.1.0-SNAPSHOT"
+(defproject clj-bigml "1.0.0"
   :description "Clojure bindings for the BigML.io API"
   :url "https://bigmlcom.github.com/clj-bigml"
   :license {:name "Apache License, Version 2.0"
