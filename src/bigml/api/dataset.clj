@@ -24,8 +24,11 @@
                  :query-params auth-params})))
 
 (defn list
-  "Retrieves a list of datasets. Optional parameters are supported
-   for pagination and filtering. Details are available here:
-      https://bigml.com/developers/datasets#d_list"
+  "Retrieves a list of datasets. The optional parameters can include
+   pagination and filtering options detailed here:
+      https://bigml.com/developers/datasets#s_list
+
+   Pagination details are returned as meta information attached to the
+   list."
   [& params]
   (apply api/list :dataset params))

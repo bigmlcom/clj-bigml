@@ -73,8 +73,11 @@
   (throw (Exception. "Unrecognized artifact for source creation.")))
 
 (defn list
-  "Retrieves a list of data sources. Optional parameters are supported
-   for pagination and filtering. Details are available here:
-      https://bigml.com/developers/sources#s_list"
+  "Retrieves a list of data sources. The optional parameters can
+   include pagination and filtering options detailed here:
+      https://bigml.com/developers/sources#s_list
+
+   Pagination details are returned as meta information attached to the
+   list."
   [& params]
   (apply api/list :source params))

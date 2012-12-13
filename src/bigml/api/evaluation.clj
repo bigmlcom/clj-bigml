@@ -25,8 +25,11 @@
                  :query-params auth-params})))
 
 (defn list
-  "Retrieves a list of evaluations. Optional parameters are supported
-   for pagination and filtering.  Details are available here:
-      https://bigml.com/developers/evaluations#e_list"
+  "Retrieves a list of evaluations. The optional parameters can include
+   pagination and filtering options detailed here:
+      https://bigml.com/developers/evaluations#s_list
+
+   Pagination details are returned as meta information attached to the
+   list."
   [& params]
   (apply api/list :evaluation params))

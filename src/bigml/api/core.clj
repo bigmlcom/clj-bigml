@@ -62,7 +62,16 @@
     (with-meta body {:http-status status})))
 
 (defn list
-  "Retrieves a list of the desired resource type."
+  "Retrieves a list of the desired resource type. The optional
+   parameters can include pagination and filtering options detailed here:
+      Sources     - https://bigml.com/developers/sources#s_list
+      Datasets    - https://bigml.com/developers/datasets#d_list
+      Models      - https://bigml.com/developers/models#m_list
+      Predictions - https://bigml.com/developers/predictions#p_list
+      Evaluations - https://bigml.com/developers/evaluations#e_list
+
+   Pagination details are returned as meta information attached to the
+   list."
   [resource-type & params]
   (let [params (apply query-params params)
         {:keys [status body]}

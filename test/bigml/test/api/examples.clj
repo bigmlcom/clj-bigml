@@ -3,7 +3,7 @@
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.test.api.examples
-  "Contains a few examples that excercise BigML's API"
+  "Contains a few examples that exercise BigML's API"
   (:require (bigml.api [core :as api]
                        [source :as source]
                        [dataset :as dataset]
