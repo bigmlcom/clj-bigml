@@ -226,9 +226,9 @@ the prediction.
 ```clojure
 (iris-local-predictor [7.6 3.0 6.6 2.1] :details true)
 ;; --> {:confidence 0.90819,
-        :count 38,
-        :objective_summary {:categories [["Iris-virginica" 38]]},
-        :output "Iris-virginica"}
+;;      :count 38,
+;;      :objective_summary {:categories [["Iris-virginica" 38]]},
+;;      :output "Iris-virginica"}
 ```
 
 
