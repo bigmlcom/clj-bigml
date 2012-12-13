@@ -134,8 +134,7 @@ multiple formats such as CSVs (with space, tab, comma, or semicolon
 separators), Excel spreadsheets, iWork Numbers, and Weka's ARFF files.
 
 A variety of compression formats are also supported such as `.Z`
-(Unix-compressed), `gz`, `bz2`, and `zip` when containing only a
-single file.
+(Unix-compressed), `gz`, and `bz2`.
 
 **Remote sources** are created from URLs:
 
