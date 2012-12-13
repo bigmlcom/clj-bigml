@@ -8,8 +8,8 @@
   (:import (java.io ByteArrayInputStream File StringWriter)
            (org.apache.commons.validator.routines UrlValidator))
   (:require (clojure.java [io :as io])
-            (clojure.data [json :as json]
-                          [csv :as csv])
+            (clojure.data [csv :as csv])
+            (cheshire [core :as json])
             (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
 
@@ -47,7 +47,7 @@
         auth-params (select-keys params api/auth-params)
         multipart (map (fn [[k v]] {:name (name k)
                                     :content (if (map? v)
-                                               (json/json-str v)
+                                               (json/generate-string v)
                                                (str v))})
                        form-params)
         multipart (conj multipart {:name "file" :content file})]
