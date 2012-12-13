@@ -50,8 +50,8 @@ There are three approaches to authentication when using the library.
 The first, and perhaps easiest, is to set environment variables:
 
 ```console
-export BIGML_USERNAME="johndoe"
-export BIGML_API_KEY="0123456789"
+export BIGML_USERNAME=johndoe
+export BIGML_API_KEY=0123456789
 export BIGML_DEV_MODE=true
 ```
 
