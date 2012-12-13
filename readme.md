@@ -64,13 +64,10 @@ discussed later):
 (source/create "some_file.csv")
 ```
 
-Alternatively, you can bind the dynamic variables in `bigml.api.core`
-before making calls to the client:
+Alternatively, you can use the `with-connection` and `make-connection`:
 
 ```clojure
-(binding [api/*username* "johndoe"
-          api/*api-key* "0123456789"
-          api/*dev-mode* true]
+(api/with-connection (api/make-connection "johndoe" "0123456789" true)
   (source/create "some_file.csv"))
 ```
 

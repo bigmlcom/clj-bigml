@@ -7,12 +7,12 @@
   (:require (clj-http [client :as client]))
   (:refer-clojure :exclude [get list]))
 
-(def ^:dynamic *username* nil)
-(def ^:dynamic *api-key* nil)
-(def ^:dynamic *dev-mode* nil)
+(def ^{:private true :dynamic true} *username* nil)
+(def ^{:private true :dynamic true} *api-key* nil)
+(def ^{:private true :dynamic true} *dev-mode* nil)
 
-(def ^:private api-version "andromeda")
-(def ^:private api-base "https://bigml.io")
+(def api-version "andromeda")
+(def api-base "https://bigml.io")
 
 (def auth-params
   "Parameters used for authentication with the BigML API."
@@ -21,6 +21,23 @@
 (def conn-params
   "Parameters used for connecting with the BigML API."
   (conj auth-params :dev_mode))
+
+(defn make-connection
+  "Creates a connection intended for 'with-connection'. Requires a
+   username and api-key and optionally accepts a boolean for
+   development mode."
+  [username api-key & [dev-mode]]
+  {:username username
+   :api-key api-key
+   :dev-mode dev-mode})
+
+(defmacro with-connection
+  "Executes the body given the connection information."
+  [connection & body]
+  `(binding [*username* (:username ~connection)
+             *api-key* (:api-key ~connection)
+             *dev-mode* (:dev-mode ~connection)]
+       ~@body))
 
 (defn query-params
   "Transforms a list of parameters into a map of query parameters

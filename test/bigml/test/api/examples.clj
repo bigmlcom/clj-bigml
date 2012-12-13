@@ -22,8 +22,8 @@
   ;; dataset, transforms the models into Clojure fns, and then
   ;; evaluates the forest on a few examples.
 
-  (binding [api/*username* nil ;; You're BigML username and API-key go here
-            api/*api-key* nil]
+  ;; Your BigML username and api-key go here!
+  (api/with-connection (api/make-connection "johndoe" "123123123")
     (let [wine-quality-url "http://goo.gl/UyDmy"
           _ (println "Building the source and dataset from UCI's wine
                       quality dataset")
@@ -56,15 +56,14 @@
       (api/delete dataset)
       (doall (pmap api/delete models)))))
 
-
 (defn- train-and-test-example []
   ;; This example uses the well-known iris dataset
   ;; (http://en.wikipedia.org/wiki/Iris_flower_data_set). We use the
   ;; optional sampling parameters to train the model on 2/3 of the
   ;; data and evaluate the results on the remaining 1/3.
 
-  (binding [api/*username* nil ;; You're BigML username and API-key go here
-            api/*api-key* nil]
+  ;; Your BigML username and api-key go here!
+  (api/with-connection (api/make-connection "johndoe" "123123123")
     (let [_ (println "Building the source and dataset for iris")
           source (api/get-final (source/create "test/data/iris.csv.gz"))
           dataset (api/get-final (dataset/create source))
