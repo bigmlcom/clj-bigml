@@ -19,7 +19,7 @@
         model (api/get-final (model/create dataset))
         pred (prediction/create model (first data))
         eval (api/get-final (evaluation/create model dataset))
-        predictor (model/predictor model)]
+        predictor (prediction/predictor model)]
     (doall (pmap api/delete [source dataset model pred eval]))
     (is (== 10 (predictor [8 2]) (predictor [5 5])))
     (is source)

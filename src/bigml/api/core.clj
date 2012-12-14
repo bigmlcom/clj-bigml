@@ -174,11 +174,3 @@
         result
         (do (Thread/sleep (long sleep-time))
             (recur (min max-wait (* decay-rate sleep-time))))))))
-
-(defn convert-inputs
-  "Attempts to convert a sequence of inputs into an input map."
-  [model inputs]
-  (let [input-fields (or (:input_fields model)
-                         (:input_fields (get-final model))
-                         (throw (Exception. "Inaccessable model")))]
-    (apply hash-map (flatten (map clojure.core/list input-fields inputs)))))

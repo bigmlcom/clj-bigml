@@ -25,8 +25,7 @@
   ;; Your BigML username and api-key go here!
   (api/with-connection (api/make-connection "johndoe" "123123123")
     (let [wine-quality-url "http://goo.gl/UyDmy"
-          _ (println "Building the source and dataset from UCI's wine
-                      quality dataset")
+          _ (println "Building the source and dataset from UCI's wine quality dataset")
           source (api/get-final (source/create wine-quality-url))
           dataset (api/get-final (dataset/create source))
 
@@ -40,7 +39,7 @@
           models (mapv api/get-final models)
 
           _ (println "Building prediction fns for each tree")
-          predictors (mapv model/predictor models)
+          predictors (mapv prediction/predictor models)
 
           _ (println "Combining tree predictors into a forest predicton fn")
           f-predictor #(/ (reduce + ((apply juxt predictors) %))
@@ -48,7 +47,7 @@
 
       (println "Make a few predictions using the forest:")
       (doseq [{:keys [input quality]} wine-quality-examples]
-        (println "\tActual Quality:" quality " - "
+        (println "\tActual Quality:" quality
                  "\tPredicted Quality:" (f-predictor input)))
 
       (println "Cleaning up by deleting the resources from BigML")
