@@ -144,7 +144,8 @@
     (with-meta body {:http-status status})))
 
 (defn status-code
-  "Return the status code of the resource as a keyword."
+  "Return the status code of the resource as a keyword.
+   https://bigml.com/developers/status_codes"
   [resource]
   ({0 :waiting 1 :queued 2 :started 3 :in-progress 4 :summarized
     5 :finished -1 :faulty -2 :unknown -3 :runnable}
@@ -162,15 +163,20 @@
   (#{:finished :faulty :unknown :runnable} (status-code resource)))
 
 (def ^:private decay-rate 1.618)
-(def ^:private init-wait 500)
-(def ^:private max-wait 120000)
+(def ^:private init-period 500)
+(def ^:private max-period 120000)
 
 (defn get-final
-  "Retries GETs to the resource until it is finalized."
-  [resource & params]
-  (loop [sleep-time init-wait]
-    (let [result (apply get resource params)]
-      (if (final? result)
-        result
-        (do (Thread/sleep (long sleep-time))
-            (recur (min max-wait (* decay-rate sleep-time))))))))
+  "Retries GETs to the resource until it is finalized.
+   Accepts :max-wait as an optional parameter.  This limits the
+   time (in milliseconds) that get-final will wait for a finalized
+   resource. If a finalized resource hasn't occured by the limit,
+   get-final will return nil."
+  [resource & {:keys [max-wait] :as params}]
+  (let [start (System/currentTimeMillis)]
+    (loop [sleep-period init-period]
+      (let [result (apply get resource (flatten (seq (dissoc params :max-wait))))]
+        (cond (final? result) result
+              (and max-wait (> (- (System/currentTimeMillis) start) max-wait)) nil
+              :else (do (Thread/sleep (long sleep-period))
+                        (recur (min max-period (* decay-rate sleep-period)))))))))
