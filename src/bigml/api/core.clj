@@ -127,11 +127,12 @@
     (with-meta body {:http-status status})))
 
 (defn delete
-  "Deletes the specified resource.  Returns nil upon success."
+  "Deletes the specified resource.  Returns true upon success."
   [resource & params]
   (let [params (apply query-params params)]
-    (when (client/delete (resource-url resource (:dev_mode params))
-                         {:query-params (dissoc params :dev_mode)}))))
+    (client/delete (resource-url resource (:dev_mode params))
+                   {:query-params (dissoc params :dev_mode)})
+    true))
 
 (defn get
   "Retrieves a resource."

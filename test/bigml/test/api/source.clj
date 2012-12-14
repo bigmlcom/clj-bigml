@@ -14,7 +14,7 @@
         retrieved (api/get updated)
         deleted (api/delete retrieved)]
     (is (and initial updated retrieved))
-    (is (nil? deleted))
+    (is (true? deleted))
     (is (thrown? Exception (api/get initial)))
     (is (= source-name (:name updated) (:name retrieved)))))
 
