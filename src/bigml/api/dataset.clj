@@ -15,7 +15,7 @@
   [source & params]
   (let [params (apply api/query-params params)
         form-params (assoc (apply dissoc params api/conn-params)
-                      :source (api/location source))
+                      :source (api/resource-id source))
         auth-params (select-keys params api/auth-params)]
     (api/create :dataset
                 (:dev_mode params)

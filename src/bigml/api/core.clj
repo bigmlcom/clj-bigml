@@ -61,8 +61,8 @@
       (assoc params :username username :api_key api_key :dev_mode dev_mode)
       (throw (Exception. "No authentication defined.")))))
 
-(defn location
-  "Returns the resource location."
+(defn resource-id
+  "Returns the resource id."
   [resource]
   (if (map? resource) (:resource resource) resource))
 
@@ -73,7 +73,7 @@
   (str (resource-base dev-mode) (name resource-type)))
 
 (defn- resource-url [resource dev-mode]
-  (str (resource-base dev-mode) (location resource)))
+  (str (resource-base dev-mode) (resource-id resource)))
 
 (defn create
   "Create a resource given a resouce-type, a boolean for development

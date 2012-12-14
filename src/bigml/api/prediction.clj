@@ -30,7 +30,7 @@
                  inputs)
         params (apply api/query-params params)
         form-params (assoc (apply dissoc params api/conn-params)
-                      :model (api/location model)
+                      :model (api/resource-id model)
                       :input_data inputs)
         auth-params (select-keys params api/auth-params)]
     (api/create :prediction

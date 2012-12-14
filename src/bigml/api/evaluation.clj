@@ -15,8 +15,8 @@
   [model dataset & params]
   (let [params (apply api/query-params params)
         form-params (assoc (apply dissoc params api/conn-params)
-                      :model (api/location model)
-                      :dataset (api/location dataset))
+                      :model (api/resource-id model)
+                      :dataset (api/resource-id dataset))
         auth-params (select-keys params api/auth-params)]
     (api/create :evaluation
                 (:dev_mode params)
