@@ -7,9 +7,7 @@
   (:require (clj-http [client :as client]))
   (:refer-clojure :exclude [get list]))
 
-(def ^{:private true :dynamic true} *username* nil)
-(def ^{:private true :dynamic true} *api-key* nil)
-(def ^{:private true :dynamic true} *dev-mode* nil)
+(def ^:dynamic *connection* nil)
 
 (def api-version "andromeda")
 (def api-base "https://bigml.io")
@@ -34,20 +32,30 @@
 (defmacro with-connection
   "Executes the body given the connection information."
   [connection & body]
-  `(binding [*username* (:username ~connection)
-             *api-key* (:api-key ~connection)
-             *dev-mode* (:dev-mode ~connection)]
-       ~@body))
+  `(binding [*connection* (merge *connection* ~connection)]
+     ~@body))
+
+(defmacro with-dev-mode
+  "Executes the body with development mode enabled."
+  [& body]
+  `(binding [*connection* (merge *connection* {:dev-mode true})]
+     ~@body))
 
 (defn query-params
   "Transforms a list of parameters into a map of query parameters
    including the connection specific keys (:username, :api_key,
-   and :dev_mode)."
+   and :dev_mode).  Throws an exception when no authentication
+   information is found."
   [& {:keys [username api_key dev_mode] :as params}]
   (let [env (System/getenv)
-        username (or username *username* (clojure.core/get env "BIGML_USERNAME"))
-        api_key (or api_key *api-key* (clojure.core/get env "BIGML_API_KEY"))
-        dev_mode (or dev_mode *dev-mode*
+        username (or username
+                     (:username *connection*)
+                     (clojure.core/get env "BIGML_USERNAME"))
+        api_key (or api_key
+                    (:api-key *connection*)
+                    (clojure.core/get env "BIGML_API_KEY"))
+        dev_mode (or dev_mode
+                     (:dev-mode *connection*)
                      (Boolean/valueOf (clojure.core/get env "BIGML_DEV_MODE")))]
     (if (and username api_key)
       (assoc params :username username :api_key api_key :dev_mode dev_mode)

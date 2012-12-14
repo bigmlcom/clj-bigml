@@ -32,5 +32,5 @@
   (test-with-generated-data))
 
 (deftest dev-mode-integration
-  (binding [api/*dev-mode* true]
+  (api/with-dev-mode
     (test-with-generated-data)))
