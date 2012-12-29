@@ -94,10 +94,14 @@
   [model]
   (let [model (if (get-root model) model (api/get model))
         root-fn (or (node-fn (get-root model))
-                    (throw (Exception. "Invalid or unsupported model")))]
+                    (throw (Exception. "Invalid or unsupported model")))
+        obj-field (keyword (first (:objective_fields model)))]
     (fn [inputs & {:keys [details]}]
       (let [inputs (if (and (not (map? inputs)) (coll? inputs))
                      (convert-inputs model inputs)
                      inputs)
             result (root-fn inputs)]
-        (if details result (:output result))))))
+        (if details
+          (dissoc (assoc result :prediction {obj-field (:output result)})
+                  :output)
+          (:output result))))))

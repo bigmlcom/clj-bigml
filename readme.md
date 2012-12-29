@@ -173,7 +173,7 @@ completion.
   (api/get-final (source/create "https://static.bigml.com/csv/iris.csv")))
 
 (def iris-dataset
-  (api/get-final (dataset/create my-source)))
+  (api/get-final (dataset/create iris-source)))
 ```
 
 ### Models
@@ -193,15 +193,35 @@ default inputs ("sepal length", "sepal width", "petal length" and
   (api/get-final (model/create iris-dataset)))
 ```
 
-Next we use the model to create a local Clojure fn for making
-predictions.  Prediction inputs can be formed two ways. They may
+### Predictions
+
+[Predictions](https://bigml.com/developers/predictions) may be
+generated through the API.  Creating a prediction requires a model and
+a set of inputs.  Prediction inputs can be formed two ways. They may
 either be a map from field-id (assigned by the dataset when it's
 created) to value, or it may be a list of input values that appear in
 the same order as they did in the data source.
 
 ```clojure
+(def iris-remote-prediction
+  (prediction/create iris-model [7.6 3.0 6.6 2.1]))
+
+(:prediction iris-remote-prediction)
+;; --> {:000004 "Iris-virginica"}
+
+;; Also valid:
+;; (prediction/create iris-model {"000000" 7.6
+;;                                "000001" 3.0
+;;                                "000002" 6.6
+;;                                "000003" 2.1})
+```
+
+Alternatively, we can use the model to create a local Clojure fn for
+making predictions.
+
+```clojure
 (def iris-local-predictor
-  (model/predictor iris-model))
+  (prediction/predictor iris-model))
 
 (iris-local-predictor {"000000" 7.6
                        "000001" 3.0
@@ -224,22 +244,7 @@ the prediction.
 ;; --> {:confidence 0.90819,
 ;;      :count 38,
 ;;      :objective_summary {:categories [["Iris-virginica" 38]]},
-;;      :output "Iris-virginica"}
-```
-
-
-### Predictions
-
-[Predictions](https://bigml.com/developers/predictions) may also be
-generated through the API.  Creating a prediction requires a model and
-a set of inputs in one of the two styles described above.
-
-```clojure
-(def iris-remote-prediction
-  (prediction/create iris-model [7.6 3.0 6.6 2.1]))
-
-(:prediction iris-remote-prediction)
-;; --> {:000004 "Iris-virginica"}
+;;      :prediction {:000004 "Iris-virginica"}}
 ```
 
 ### Evaluations
