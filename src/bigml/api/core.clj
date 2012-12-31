@@ -82,8 +82,8 @@
    source, dataset, model, evaluation, and prediction namespaces.
 
    HTTP response information is attached as meta data. Exceptions are
-   thrown on failure unless :throw-exceptions is set as true (default
-   is false), in which case the HTTP response details are returned as
+   thrown on failure unless :throw-exceptions is set as false (default
+   is true), in which case the HTTP response details are returned as
    a map on failure."
   [resource-type dev-mode params]
   (let [params (assoc params :as :json)
@@ -106,7 +106,7 @@
 
    Pagination details are returned as meta data attached to the list,
    along with the HTTP response information.  Exceptions are thrown on
-   failure unless :throw-exceptions is set as true (default is false),
+   failure unless :throw-exceptions is set as false (default is true),
    in which case the HTTP response details are returned as a map on
    failure."
   [resource-type & params]
@@ -138,8 +138,8 @@
       Evaluations - https://bigml.com/developers/evaluations#e_update
 
    HTTP response information is attached as meta data. Exceptions are
-   thrown on failure unless :throw-exceptions is set as true (default
-   is false), in which case the HTTP response details are returned as
+   thrown on failure unless :throw-exceptions is set as false (default
+   is true), in which case the HTTP response details are returned as
    a map on failure."
   [resource updates & params]
   (let [params (apply query-params params)
@@ -161,7 +161,7 @@
    resource (as returned with `list`). Returns true upon success.
 
    Exceptions are thrown on failure unless :throw-exceptions is set as
-   true (default is false), in which case the HTTP response details
+   false (default is true), in which case the HTTP response details
    are returned as a map on failure."
   [resource & params]
   (let [params (apply query-params params)
@@ -181,8 +181,8 @@
    is attached as meta data.
 
    HTTP response information is attached as meta data. Exceptions are
-   thrown on failure unless :throw-exceptions is set as true (default
-   is false), in which case the HTTP response details are returned as
+   thrown on failure unless :throw-exceptions is set as false (default
+   is true), in which case the HTTP response details are returned as
    a map on failure."
   [resource & params]
   (let [params (apply query-params params)

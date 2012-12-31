@@ -19,8 +19,8 @@
       https://bigml.com/developers/models#m_create
 
    HTTP response information is attached as meta data. Exceptions are
-   thrown on failure unless :throw-exceptions is set as true (default
-   is false), in which case the HTTP response details are returned as
+   thrown on failure unless :throw-exceptions is set as false (default
+   is true), in which case the HTTP response details are returned as
    a map on failure."
   [dataset & params]
   (let [params (apply api/query-params params)
@@ -41,7 +41,7 @@
 
    Pagination details are returned as meta data attached to the list,
    along with the HTTP response information.  Exceptions are thrown on
-   failure unless :throw-exceptions is set as true (default is false),
+   failure unless :throw-exceptions is set as false (default is true),
    in which case the HTTP response details are returned as a map on
    failure."
   [& params]
