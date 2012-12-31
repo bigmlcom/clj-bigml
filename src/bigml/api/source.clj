@@ -27,7 +27,12 @@
    sequences (each inner sequence representing a row, and intended for
    small amounts of data).  Accepts the optional creation parameters
    defined in the BigML API docs:
-      https://bigml.com/developers/sources#s_create"
+      https://bigml.com/developers/sources#s_create
+
+   HTTP response information is attached as meta data. Exceptions are
+   thrown on failure unless :throw-exceptions is set as true (default
+   is false), in which case the HTTP response details are returned as
+   a map on failure."
   create-type)
 
 (defmethod create :url [url & params]
@@ -37,7 +42,8 @@
     (api/create :source
                 (:dev_mode params)
                 {:content-type :json
-                 :form-params form-params
+                 :throw-exceptions (:throw-exceptions params true)
+                 :form-params (dissoc form-params :throw-exceptions)
                  :query-params auth-params})))
 
 (defmethod create :file [file & params]
@@ -77,7 +83,10 @@
    include pagination and filtering options detailed here:
       https://bigml.com/developers/sources#s_list
 
-   Pagination details are returned as meta information attached to the
-   list."
+   Pagination details are returned as meta data attached to the list,
+   along with the HTTP response information.  Exceptions are thrown on
+   failure unless :throw-exceptions is set as true (default is false),
+   in which case the HTTP response details are returned as a map on
+   failure."
   [& params]
   (apply api/list :source params))

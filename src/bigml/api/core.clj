@@ -79,70 +79,121 @@
   "Create a resource given a resouce-type, a boolean for development
    mode, and a map of parameters formatted for a clj-http POST.  It's
    recommended to use the more friendly create functions in the
-   source, dataset, model, evaluation, and prediction namespaces."
+   source, dataset, model, evaluation, and prediction namespaces.
+
+   HTTP response information is attached as meta data. Exceptions are
+   thrown on failure unless :throw-exceptions is set as true (default
+   is false), in which case the HTTP response details are returned as
+   a map on failure."
   [resource-type dev-mode params]
   (let [params (assoc params :as :json)
-        {:keys [body status]}
+        {:keys [body] :as response}
         (client/post (resource-type-url resource-type dev-mode) params)]
-    (with-meta body {:http-status status})))
+    (if (client/success? response)
+      (with-meta body (dissoc response :body))
+      response)))
 
 (defn list
-  "Retrieves a list of the desired resource type. The optional
-   parameters can include pagination and filtering options detailed here:
+  "Retrieves a list of the desired resource type. The list will
+   contain partial representations of the resource.  Optional
+   parameters can include pagination and filtering options as detailed
+   here:
       Sources     - https://bigml.com/developers/sources#s_list
       Datasets    - https://bigml.com/developers/datasets#d_list
       Models      - https://bigml.com/developers/models#m_list
       Predictions - https://bigml.com/developers/predictions#p_list
       Evaluations - https://bigml.com/developers/evaluations#e_list
 
-   Pagination details are returned as meta information attached to the
-   list."
+   Pagination details are returned as meta data attached to the list,
+   along with the HTTP response information.  Exceptions are thrown on
+   failure unless :throw-exceptions is set as true (default is false),
+   in which case the HTTP response details are returned as a map on
+   failure."
   [resource-type & params]
   (let [params (apply query-params params)
-        {:keys [status body]}
+        {:keys [body] :as response}
         (client/get (resource-type-url resource-type (:dev_mode params))
-                    {:query-params (dissoc params :dev_mode)
+                    {:query-params (dissoc params :dev_mode :throw-exceptions)
+                     :throw-exceptions (:throw-exceptions params true)
                      :as :json})]
-    (let [{:keys [meta objects]} body]
-      (with-meta objects (assoc meta :http-status status)))))
+    (if (client/success? response)
+      (let [{:keys [meta objects]} body]
+        (with-meta objects (merge meta (dissoc response :body))))
+      response)))
 
 (defn update
   "Updates the specified resource given a map of attributes to be
-   updated.  Returns the updated resource upon success. The valid
-   attributes for updating are listed in the BigML API docs according
-   to resource type:
+   updated. The resource may be either a string representing the
+   resource id (`model/123123`), or a map with either the full
+   resource (as returned with `get`) or a partial resource (as
+   returned with `list`).
+
+   Returns the updated resource upon success. The valid attributes for
+   updating are listed in the BigML API docs according to resource
+   type:
       Sources     - https://bigml.com/developers/sources#s_update
       Datasets    - https://bigml.com/developers/datasets#d_update
       Models      - https://bigml.com/developers/models#m_update
       Predictions - https://bigml.com/developers/predictions#p_update
-      Evaluations - https://bigml.com/developers/evaluations#e_update"
+      Evaluations - https://bigml.com/developers/evaluations#e_update
+
+   HTTP response information is attached as meta data. Exceptions are
+   thrown on failure unless :throw-exceptions is set as true (default
+   is false), in which case the HTTP response details are returned as
+   a map on failure."
   [resource updates & params]
   (let [params (apply query-params params)
-        {:keys [status body]}
+        {:keys [body] :as response}
         (client/put (resource-url resource (:dev_mode params))
-                    {:query-params (dissoc params :dev_mode)
+                    {:query-params (dissoc params :dev_mode :throw-exceptions)
+                     :throw-exceptions (:throw-exceptions params true)
                      :form-params updates
                      :content-type :json
                      :as :json})]
-    (with-meta body {:http-status status})))
+    (if (client/success? response)
+      (with-meta body (dissoc response :body))
+      response)))
 
 (defn delete
-  "Deletes the specified resource.  Returns true upon success."
-  [resource & params]
-  (let [params (apply query-params params)]
-    (client/delete (resource-url resource (:dev_mode params))
-                   {:query-params (dissoc params :dev_mode)})
-    true))
+  "Deletes the specified resource. The resource may be either a string
+   representing the resource id (`model/123123`), or a map with either
+   the full resource (as returned with `get`) or a partial
+   resource (as returned with `list`). Returns true upon success.
 
-(defn get
-  "Retrieves a resource."
+   Exceptions are thrown on failure unless :throw-exceptions is set as
+   true (default is false), in which case the HTTP response details
+   are returned as a map on failure."
   [resource & params]
   (let [params (apply query-params params)
-        {:keys [status body]}
+        {:keys [body] :as response}
+        (client/delete (resource-url resource (:dev_mode params))
+                       {:query-params (dissoc params :dev_mode :throw-exceptions)
+                        :throw-exceptions (:throw-exceptions params true)})]
+    (if (client/success? response)
+      true
+      response)))
+
+(defn get
+  "Retrieves the current resource. The resource may be either a string
+   representing the resource id (`model/123123`), or a map with either
+   the full resource (as returned with `get`) or a partial
+   resource (as returned with `list`). The HTTP response information
+   is attached as meta data.
+
+   HTTP response information is attached as meta data. Exceptions are
+   thrown on failure unless :throw-exceptions is set as true (default
+   is false), in which case the HTTP response details are returned as
+   a map on failure."
+  [resource & params]
+  (let [params (apply query-params params)
+        {:keys [body] :as response}
         (client/get (resource-url resource (:dev_mode params))
-                    {:query-params (dissoc params :dev_mode)
+                    {:query-params (dissoc params :dev_mode :throw-exceptions)
+                     :throw-exceptions (:throw-exceptions params true)
                      :as :json})]
-    (with-meta body {:http-status status})))
+    (if (client/success? response)
+      (with-meta body (dissoc response :body))
+      response)))
 
 (defn status-code
   "Return the status code of the resource as a keyword.

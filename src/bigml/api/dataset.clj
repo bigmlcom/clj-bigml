@@ -9,9 +9,19 @@
   (:refer-clojure :exclude [list]))
 
 (defn create
-  "Creates a dataset given a source. Accepts the optional creation
-   parameters defined in the BigML API docs:
-      https://bigml.com/developers/datasets#d_create"
+  "Creates a dataset given a source. The source may be either a string
+   representing the source id (`source/123123`), or a map with either
+   the full source (as returned with `get`) or a partial source (as
+   returned with `list`).
+
+   Accepts the optional creation parameters defined in the BigML API
+   docs:
+      https://bigml.com/developers/datasets#d_create
+
+   HTTP response information is attached as meta data. Exceptions are
+   thrown on failure unless :throw-exceptions is set as true (default
+   is false), in which case the HTTP response details are returned as
+   a map on failure."
   [source & params]
   (let [params (apply api/query-params params)
         form-params (assoc (apply dissoc params api/conn-params)
@@ -20,7 +30,8 @@
     (api/create :dataset
                 (:dev_mode params)
                 {:content-type :json
-                 :form-params form-params
+                 :throw-exceptions (:throw-exceptions params true)
+                 :form-params (dissoc form-params :throw-exceptions)
                  :query-params auth-params})))
 
 (defn list
@@ -28,7 +39,10 @@
    pagination and filtering options detailed here:
       https://bigml.com/developers/datasets#s_list
 
-   Pagination details are returned as meta information attached to the
-   list."
+   Pagination details are returned as meta data attached to the list,
+   along with the HTTP response information.  Exceptions are thrown on
+   failure unless :throw-exceptions is set as true (default is false),
+   in which case the HTTP response details are returned as a map on
+   failure."
   [& params]
   (apply api/list :dataset params))

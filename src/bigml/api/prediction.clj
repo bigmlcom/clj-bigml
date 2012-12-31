@@ -15,7 +15,10 @@
     (apply hash-map (flatten (map clojure.core/list input-fields inputs)))))
 
 (defn create
-  "Creates a prediction given a model and the field inputs.
+  "Creates a prediction given a model and the field inputs. The model
+   may be either a string representing the model id (`model/123123`),
+   or a map with either the full model (as returned with `get`) or a
+   partial model (as returned with `list`).
 
    The inputs may either be a map (field ids to values), or a
    sequence of the inputs fields in the order they appeared during
@@ -23,7 +26,12 @@
 
    This function also accepts the optional creation parameters defined
    in the BigML API docs:
-      https://bigml.com/developers/predictions#p_create"
+      https://bigml.com/developers/predictions#p_create
+
+   HTTP response information is attached as meta data. Exceptions are
+   thrown on failure unless :throw-exceptions is set as true (default
+   is false), in which case the HTTP response details are returned as
+   a map on failure."
   [model inputs & params]
   (let [inputs (if (and (not (map? inputs)) (coll? inputs))
                  (convert-inputs model inputs)
@@ -36,7 +44,8 @@
     (api/create :prediction
                 (:dev_mode params)
                 {:content-type :json
-                 :form-params form-params
+                 :throw-exceptions (:throw-exceptions params true)
+                 :form-params (dissoc form-params :throw-exceptions)
                  :query-params auth-params})))
 
 (defn list
@@ -44,8 +53,11 @@
    pagination and filtering options detailed here:
       https://bigml.com/developers/predictions#s_list
 
-   Pagination details are returned as meta information attached to the
-   list."
+   Pagination details are returned as meta data attached to the list,
+   along with the HTTP response information.  Exceptions are thrown on
+   failure unless :throw-exceptions is set as true (default is false),
+   in which case the HTTP response details are returned as a map on
+   failure."
   [& params]
   (apply api/list :prediction params))
 
