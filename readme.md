@@ -6,7 +6,9 @@
 ## Installation
 
 `clj-bigml` is available as a Maven artifact from
-[Clojars](http://clojars.org/bigml/clj-bigml):
+[Clojars](http://clojars.org/bigml/clj-bigml).
+
+For [Leiningen](https://github.com/technomancy/leiningen):
 
 ```clojure
 [bigml/clj-bigml "0.1.0"]
