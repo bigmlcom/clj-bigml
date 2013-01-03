@@ -3,6 +3,15 @@
 **clj-bigml** provides Clojure bindings for the
 [BigML.io API](https://bigml.com/developers/overview).
 
+## Installation
+
+`clj-bigml` is available as a Maven artifact from
+[Clojars](http://clojars.org/bigml/clj-bigml):
+
+```clojure
+[bigml/clj-bigml "0.1.0"]
+```
+
 ## Overview
 
 BigML offers a REST-style service for building, sharing, and
