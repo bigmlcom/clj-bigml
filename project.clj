@@ -1,6 +1,6 @@
 (defproject bigml/clj-bigml "0.1.0"
   :description "Clojure bindings for the BigML.io API"
-  :url "http://bigmlcom.github.com/clj-bigml"
+  :url "https://github.com/bigmlcom/clj-bigml"
   :license {:name "Apache License, Version 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [[org.clojure/clojure "1.4.0"]
