@@ -1,4 +1,4 @@
-;; Copyright 2012 BigML
+;; Copyright 2012, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -7,6 +7,18 @@
       https://bigml.com/developers/datasets"
   (:require (bigml.api [core :as api]))
   (:refer-clojure :exclude [list]))
+
+(defn- create* [origin-tag origin params]
+  (let [params (apply api/query-params params)
+        form-params (assoc (apply dissoc params api/conn-params)
+                      origin-tag (api/resource-id origin))
+        auth-params (select-keys params api/auth-params)]
+    (api/create :dataset
+                (:dev_mode params)
+                {:content-type :json
+                 :throw-exceptions (:throw-exceptions params true)
+                 :form-params (dissoc form-params :throw-exceptions)
+                 :query-params auth-params})))
 
 (defn create
   "Creates a dataset given a source. The source may be either a string
@@ -23,16 +35,18 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [source & params]
-  (let [params (apply api/query-params params)
-        form-params (assoc (apply dissoc params api/conn-params)
-                      :source (api/resource-id source))
-        auth-params (select-keys params api/auth-params)]
-    (api/create :dataset
-                (:dev_mode params)
-                {:content-type :json
-                 :throw-exceptions (:throw-exceptions params true)
-                 :form-params (dissoc form-params :throw-exceptions)
-                 :query-params auth-params})))
+  (create* :source source params))
+
+(defn clone
+  "Clones a given dataset, represented either as a full resource (as
+   returned by, e.g., `get`, or as string id.
+
+   The optional parameters map can contain any of the options described
+   in https://bigml.com/developers/transformations#t_cloning
+
+   Error handling is analogous to that of `create`, which see."
+  [dataset & params]
+  (create* :origin_dataset dataset params))
 
 (defn list
   "Retrieves a list of datasets. The optional parameters can include
