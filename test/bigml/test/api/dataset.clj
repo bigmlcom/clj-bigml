@@ -1,4 +1,4 @@
-;; Copyright 2014 BigML
+;; Copyright 2014, 2015 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -39,7 +39,7 @@
                          :status :origin_dataset :download :range
                          :ranges :sample_rates :out_of_bag
                          :replacement :sample_rate :seed :seeds
-                         :replacements :name)
+                         :replacements :name :new_fields :updated)
             dsc (api/get-final (dataset/clone ds))
             dsc2 (api/get-final (dataset/clone (:resource dsc)))]
         (is (= (clc dsc) (clc ds)) (data/diff (clc dsc) (clc ds)))
