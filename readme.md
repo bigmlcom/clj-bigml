@@ -170,9 +170,10 @@ Please note that inline sources support only small-ish amounts of data
 ### Datasets
 
 [Datasets](https://bigml.com/developers/datasets) represent processed
-data ready for modeling. They are created from sources and contain
-statistical summarizations for each field (or column) in the data.
-`bigml.api.dataset/create` makes dataset creation convenient.
+data ready for modeling. They are created from sources or other
+datasets and contain statistical summarizations for each field (or
+column) in the data.  `bigml.api.dataset/create` makes dataset
+creation convenient.
 
 In this example, from the well known [Iris data]
 (http://en.wikipedia.org/wiki/Iris_flower_data_set) we create a
@@ -186,6 +187,9 @@ completion.
 (def iris-dataset
   (api/get-final (dataset/create iris-source)))
 ```
+
+Once we've created a dataset, we can transform it, optionally sampling
+or filtering its rows, using the `dataset/clone` function.
 
 ### Models
 
