@@ -10,7 +10,7 @@
   (:require (clojure.java [io :as io])
             (clojure.data [csv :as csv])
             (cheshire [core :as json])
-            (bigml.api [core :as api]))
+            (bigml.api [core :as api] [utils :as utils]))
   (:refer-clojure :exclude [list]))
 
 (defn- url? [url]
@@ -35,16 +35,19 @@
    a map on failure."
   create-type)
 
+;; (defmethod create :url [url & params]
+;;   (let [params (apply api/query-params params)
+;;         form-params (assoc (apply dissoc params api/conn-params) :remote url)
+;;         auth-params (select-keys params api/auth-params)]
+;;     (api/create :source
+;;                 (:dev_mode params)
+;;                 {:content-type :json
+;;                  :throw-exceptions (:throw-exceptions params true)
+;;                  :form-params (dissoc form-params :throw-exceptions)
+;;                  :query-params auth-params})))
+
 (defmethod create :url [url & params]
-  (let [params (apply api/query-params params)
-        form-params (assoc (apply dissoc params api/conn-params) :remote url)
-        auth-params (select-keys params api/auth-params)]
-    (api/create :source
-                (:dev_mode params)
-                {:content-type :json
-                 :throw-exceptions (:throw-exceptions params true)
-                 :form-params (dissoc form-params :throw-exceptions)
-                 :query-params auth-params})))
+  (utils/create :source :remote url params))
 
 (defmethod create :file [file & params]
   (let [file (io/file file)

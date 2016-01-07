@@ -5,20 +5,8 @@
 (ns bigml.api.dataset
   "Offers functions specific for BigML datasets.
       https://bigml.com/developers/datasets"
-  (:require (bigml.api [core :as api]))
+  (:require (bigml.api [core :as api] [utils :as utils]))
   (:refer-clojure :exclude [list]))
-
-(defn- create* [origin-tag origin params]
-  (let [params (apply api/query-params params)
-        form-params (assoc (apply dissoc params api/conn-params)
-                      origin-tag (api/resource-id origin))
-        auth-params (select-keys params api/auth-params)]
-    (api/create :dataset
-                (:dev_mode params)
-                {:content-type :json
-                 :throw-exceptions (:throw-exceptions params true)
-                 :form-params (dissoc form-params :throw-exceptions)
-                 :query-params auth-params})))
 
 (defn create
   "Creates a dataset given a source. The source may be either a string
@@ -35,7 +23,7 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [source & params]
-  (create* :source source params))
+  (utils/create :dataset :source source params))
 
 (defn clone
   "Clones a given dataset, represented either as a full resource (as
@@ -46,7 +34,7 @@
 
    Error handling is analogous to that of `create`, which see."
   [dataset & params]
-  (create* :origin_dataset dataset params))
+  (utils/create :dataset :origin_dataset dataset params))
 
 (defn list
   "Retrieves a list of datasets. The optional parameters can include

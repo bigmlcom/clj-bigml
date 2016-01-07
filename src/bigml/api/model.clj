@@ -5,7 +5,7 @@
 (ns bigml.api.model
   "Offers functions specific for BigML models.
       https://bigml.com/developers/models"
-  (:require (bigml.api [core :as api]))
+  (:require (bigml.api [core :as api] [utils :as utils]))
   (:refer-clojure :exclude [list]))
 
 (defn create
@@ -23,16 +23,7 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [dataset & params]
-  (let [params (apply api/query-params params)
-        form-params (assoc (apply dissoc params api/conn-params)
-                      :dataset (api/resource-id dataset))
-        auth-params (select-keys params api/auth-params)]
-    (api/create :model
-                (:dev_mode params)
-                {:content-type :json
-                 :throw-exceptions (:throw-exceptions params true)
-                 :form-params (dissoc form-params :throw-exceptions)
-                 :query-params auth-params})))
+  (utils/create :model :dataset dataset params))
 
 (defn list
   "Retrieves a list of models. The optional parameters can include

@@ -5,7 +5,7 @@
 (ns bigml.api.cluster
   "Offers functions specific for BigML clusters.
      https://bigml.com/developers/clusters"
-  (:require (bigml.api [core :as api]))
+  (:require (bigml.api [core :as api] [utils :as utils]))
   (:refer-clojure :exclude [list]))
 
 (defn create
@@ -19,16 +19,7 @@
   on failure unless :throw-exceptions is set to false (default is true),
   in which case the HTTP response details are returned as a map on failure."
   [dataset & params]
-  (let [params (apply api/query-params params)
-        form-params (assoc (apply dissoc params api/conn-params)
-                      :dataset (api/resource-id dataset))
-        auth-params (select-keys params api/auth-params)]
-    (api/create :cluster
-                (:dev_mode params)
-                {:content-type :json
-                 :throw-exceptions (:throw-exceptions params true)
-                 :form-params (dissoc form-params :throw-exceptions)
-                 :query-params auth-params})))
+  (utils/create :cluster :dataset dataset params))
 
 (defn list
   "Retrieves a list of clusters. The optional parameters can include

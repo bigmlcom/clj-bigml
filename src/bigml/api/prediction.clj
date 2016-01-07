@@ -11,7 +11,7 @@
 (defn- convert-inputs [model inputs]
   (let [input-fields (or (:input_fields model)
                          (:input_fields (api/get-final model))
-                         (throw (Exception. "Inaccessable model")))]
+                         (throw (Exception. "Inaccessible model")))]
     (apply hash-map (flatten (map clojure.core/list input-fields inputs)))))
 
 (defn create
