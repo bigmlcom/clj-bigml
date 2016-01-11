@@ -8,11 +8,13 @@
   (:use clojure.test))
 
 (defn- create-and-test [artifact & params]
-  (let [initial (api/get-final (apply source/create artifact params))
+  (let [{:keys [username api_key dev_mode] :as sticky-pars} params
+        sticky-pars (flatten (seq sticky-pars))
+        initial (apply api/get-final (apply source/create artifact params) sticky-pars)
         source-name (str "test-source" (rand-int 1000))
-        updated (api/update initial {:name source-name})
-        retrieved (api/get updated)
-        deleted (api/delete retrieved)]
+        updated (apply api/update initial {:name source-name} sticky-pars)
+        retrieved (apply api/get updated sticky-pars)
+        deleted (apply api/delete retrieved sticky-pars)]
     (is (and initial updated retrieved))
     (is (true? deleted))
     (is (thrown? Exception (api/get initial)))
@@ -20,7 +22,7 @@
 
 (deftest sources
   (testing "Source creation from file"
-    (create-and-test "test/data/iris.csv.gz"))
+    (create-and-test "test/data/iris.csv.gz" :dev_mode true))
   (testing "Source creation from url"
     (create-and-test "https://static.bigml.com/csv/iris.csv"))
   (testing "Source creation from collection"
