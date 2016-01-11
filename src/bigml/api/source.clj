@@ -35,19 +35,8 @@
    a map on failure."
   create-type)
 
-;; (defmethod create :url [url & params]
-;;   (let [params (apply api/query-params params)
-;;         form-params (assoc (apply dissoc params api/conn-params) :remote url)
-;;         auth-params (select-keys params api/auth-params)]
-;;     (api/create :source
-;;                 (:dev_mode params)
-;;                 {:content-type :json
-;;                  :throw-exceptions (:throw-exceptions params true)
-;;                  :form-params (dissoc form-params :throw-exceptions)
-;;                  :query-params auth-params})))
-
 (defmethod create :url [url & params]
-  (utils/create :source :remote url params))
+  (utils/create :target :source :origin [:remote url] :params params))
 
 (defmethod create :file [file & params]
   (let [file (io/file file)

@@ -5,14 +5,8 @@
 (ns bigml.api.prediction
   "Offers functions specific for BigML predictions.
       https://bigml.com/developers/predictions"
-  (:require (bigml.api [core :as api]))
+  (:require (bigml.api [core :as api] [utils :as utils]))
   (:refer-clojure :exclude [list]))
-
-(defn- convert-inputs [model inputs]
-  (let [input-fields (or (:input_fields model)
-                         (:input_fields (api/get-final model))
-                         (throw (Exception. "Inaccessible model")))]
-    (apply hash-map (flatten (map clojure.core/list input-fields inputs)))))
 
 (defn create
   "Creates a prediction given a model and the field inputs. The model
@@ -33,20 +27,10 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [model inputs & params]
-  (let [inputs (if (and (not (map? inputs)) (coll? inputs))
-                 (convert-inputs model inputs)
-                 inputs)
-        params (apply api/query-params params)
-        form-params (assoc (apply dissoc params api/conn-params)
-                      :model (api/resource-id model)
-                      :input_data inputs)
-        auth-params (select-keys params api/auth-params)]
-    (api/create :prediction
-                (:dev_mode params)
-                {:content-type :json
-                 :throw-exceptions (:throw-exceptions params true)
-                 :form-params (dissoc form-params :throw-exceptions)
-                 :query-params auth-params})))
+  (utils/create :target :prediction
+                :origin [:model model]
+                :params params
+                :inputs inputs))
 
 (defn list
   "Retrieves a list of predictions. The optional parameters can include
@@ -110,7 +94,7 @@
         obj-field (keyword (first (:objective_fields model)))]
     (fn [inputs & {:keys [details]}]
       (let [inputs (if (and (not (map? inputs)) (coll? inputs))
-                     (convert-inputs model inputs)
+                     (utils/normalized-inputs model inputs)
                      inputs)
             result (root-fn inputs)]
         (if details

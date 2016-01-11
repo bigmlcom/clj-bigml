@@ -11,28 +11,27 @@
 For [Leiningen](https://github.com/technomancy/leiningen):
 
 ```clojure
-[bigml/clj-bigml "0.1.0"]
+[bigml/clj-bigml "0.2.0"]
 ```
 
 ## Overview
 
-BigML offers a REST-style service for building, sharing, and
-evaluating machine learning models.  Currently the only model variety
-supported is [CART-style decision trees]
-(http://en.wikipedia.org/wiki/Decision_tree_learning) grown in
-an anytime, streaming fashion.  The trees use standard ML practices
-such as information gain (or information gain ratio) for
-classification problems, squared error for regression, and statistical
-pruning options.
+BigML offers a REST-style service, BigML.io, for creating and managing
+BigML resources programmatically. You can use BigML.io for basic
+supervised and unsupervised machine learning tasks and also to create
+sophisticated machine learning pipelines.
 
-The service takes a white-box approach.  While predictions may be made
-through the API, the models can also be downloaded for use locally
-(either as BigML's native JSON format or as
-[PMML](http://www.dmg.org/v4-1/GeneralStructure.html)).
+`clj-bigml` aims to make it easier to use BigML.io features from
+Clojure. BigML.io features are always growing and adapting to BigML
+customers' requirements, and `clj-bigml` does currently only supports
+a limited subset of those features.
 
-The API also supports sampling and randomization options which enable
-ensemble methods such as [random forests]
-(http://en.wikipedia.org/wiki/Random_forest).
+BigML.io takes a white-box approach where it makes sense. This
+includes the possibility of downloading your datasets, models,
+clusters and anomaly detectors and use them locally (either as BigML's
+native JSON format or as
+[PMML](http://www.dmg.org/v4-1/GeneralStructure.html)) in addition to
+being able to use them through BigML API.
 
 Please note, all code samples in this document assume that the
 following namespaces are already required:
@@ -42,6 +41,8 @@ following namespaces are already required:
                      [source :as source]
                      [dataset :as dataset]
                      [model :as model]
+                     [cluster :as cluster]
+                     [centroid :as centroid]
                      [prediction :as prediction]
                      [evaluation :as evaluation]])
 ```
@@ -94,13 +95,13 @@ development mode as parameters when calling client functions:
 
 ## Resources
 
-There are five types of resources in the BigML API:
+The BigML API provides access to a growing number of [ML resources]
+(https://bigml.com/developers/overview#ov_bigml_resources), including
+such resources as
 [sources](https://bigml.com/developers/sources),
 [datasets](https://bigml.com/developers/datasets),
-[models](https://bigml.com/developers/models),
-[predictions](https://bigml.com/developers/predictions), and
-[evaluations](https://bigml.com/developers/evaluations).  For more
-about them, see the [tutorial videos on YouTube]
+[models](https://bigml.com/developers/models), etc.
+For more about them, see the [tutorial videos on YouTube]
 (http://www.youtube.com/playlist?list=PL16FC91153F8C47A7&feature=plcp).
 
 `bigml.api.core` provides a set of functions that act as primitives
@@ -264,7 +265,7 @@ the prediction.
 
 ### Evaluations
 
-Finally, an [evaluation](https://bigml.com/developers/evaluations) of
+An [evaluation](https://bigml.com/developers/evaluations) of
 a model on a dataset may be generated through the API.
 
 We continue the Iris example by evaluating our model on its own
@@ -285,12 +286,42 @@ as a demonstration.
 We have perfect accuracy and a spotless confusion matrix.  But of
 course, never trust evaluations on training data.
 
+### Clusters
+
+A [cluster](https://bigml.com/developers/clusters) is a set of groups
+of instances of a dataset that have been automatically classified
+together according to a distance measure computed using the fields of
+the dataset. Cluster are used in unsupervised learning.
+
+```clojure
+(def iris-cluster
+  (api/get-final (cluster/create iris-dataset)))
+```
+
+### Centroids
+
+A [centroid](https://bigml.com/developers/clusters) represents the
+center of a cluster and is computed using the mean for each numeric
+field and the mode for each categorical field. You can create a
+centroid for a given cluster and a new data instance to identify the
+cluster's centroid that is closest to the given instance.
+
+```clojure
+(def iris-centroid
+    (api/get-final (centroid/create iris-cluster {"000000" 7.6
+                                                  "000001" 3.0
+                                                  "000002" 6.6
+                                                  "000003" 2.1})))
+
+### Clean up resources
+
 If you've been following along in your REPL, you can clean up the
 artifacts generated in these examples like so:
 
 ```clojure
 (mapv api/delete [iris-source iris-dataset iris-model
-                  iris-remote-prediction iris-evaluation])
+                  iris-remote-prediction iris-evaluation
+                  iris-cluster iris-centroid])
 ```
 
 ## More Examples
@@ -311,6 +342,6 @@ in our [Campfire chatroom](https://bigmlinc.campfirenow.com/f20a0).
 
 ## License
 
-Copyright (C) 2012 BigML Inc.
+Copyright (C) 2012-2016 BigML Inc.
 
 Distributed under the Apache License, Version 2.0.

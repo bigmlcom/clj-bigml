@@ -23,7 +23,7 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [source & params]
-  (utils/create :dataset :source source params))
+  (utils/create :target :dataset :origin [:source source] :params params))
 
 (defn clone
   "Clones a given dataset, represented either as a full resource (as
@@ -34,7 +34,7 @@
 
    Error handling is analogous to that of `create`, which see."
   [dataset & params]
-  (utils/create :dataset :origin_dataset dataset params))
+  (utils/create :target :dataset :origin [:origin_dataset dataset] :params params))
 
 (defn list
   "Retrieves a list of datasets. The optional parameters can include

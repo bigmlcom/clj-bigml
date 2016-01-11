@@ -8,6 +8,7 @@
                        [dataset :as dataset]
                        [model :as model]
                        [cluster :as cluster]
+                       [centroid :as centroid]
                        [prediction :as prediction]
                        [evaluation :as evaluation]))
   (:use clojure.test))
@@ -21,15 +22,18 @@
         pred (prediction/create model (first data))
         eval (api/get-final (evaluation/create model dataset))
         predictor (prediction/predictor model)
-        cluster (api/get-final (cluster/create dataset))]
-    (doall (pmap api/delete [source dataset model pred eval cluster]))
+        cluster (api/get-final (cluster/create dataset))
+        centroid (centroid/create cluster (first data))]
+    (doall (pmap api/delete
+                 [source dataset model pred eval cluster centroid]))
     (is (== 10 (predictor [8 2]) (predictor [5 5])))
     (is source)
     (is dataset)
     (is model)
     (is pred)
     (is eval)
-    (is cluster)))
+    (is cluster)
+    (is centroid)))
 
 (deftest integration
   (test-with-generated-data))
