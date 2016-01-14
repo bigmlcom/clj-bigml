@@ -7,10 +7,13 @@
                        [source :as source]))
   (:use clojure.test))
 
-(defn- create-and-test [artifact & params]
-  (let [{:keys [username api_key dev_mode] :as sticky-pars} params
-        sticky-pars (flatten (seq sticky-pars))
-        initial (apply api/get-final (apply source/create artifact params) sticky-pars)
+(defn- create-and-test [artifact & {:as params}]
+  (let [sticky-pars (flatten (seq (select-keys 
+                                   params
+                                   [:username :api_key :dev_mode])))
+        params (flatten (seq params))
+        initial (apply api/get-final
+                       (apply source/create artifact params) sticky-pars)
         source-name (str "test-source" (rand-int 1000))
         updated (apply api/update initial {:name source-name} sticky-pars)
         retrieved (apply api/get updated sticky-pars)
