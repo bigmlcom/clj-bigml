@@ -10,9 +10,8 @@
 
 For [Leiningen](https://github.com/technomancy/leiningen):
 
-```clojure
-[bigml/clj-bigml "0.2.0"]
-```
+[![Clojars Project](https://img.shields.io/clojars/v/bigml/clj-bigml.svg)]
+(https://clojars.org/bigml/clj-bigml)
 
 ## Overview
 
@@ -23,7 +22,7 @@ sophisticated machine learning pipelines.
 
 `clj-bigml` aims to make it easier to use BigML.io features from
 Clojure. BigML.io features are always growing and adapting to BigML
-customers' requirements, and `clj-bigml` does currently only supports
+customers' requirements, and `clj-bigml` currently supports only
 a limited subset of those features.
 
 BigML.io takes a white-box approach where it makes sense. This
@@ -291,7 +290,7 @@ course, never trust evaluations on training data.
 A [cluster](https://bigml.com/developers/clusters) is a set of groups
 of instances of a dataset that have been automatically classified
 together according to a distance measure computed using the fields of
-the dataset. Cluster are used in unsupervised learning.
+the dataset.  A clustering is an example of unsupervised learning.
 
 ```clojure
 (def iris-cluster
@@ -302,7 +301,7 @@ the dataset. Cluster are used in unsupervised learning.
 
 A [centroid](https://bigml.com/developers/clusters) represents the
 center of a cluster and is computed using the mean for each numeric
-field and the mode for each categorical field. You can create a
+field and the mode for each categorical field.  You can create a
 centroid for a given cluster and a new data instance to identify the
 cluster's centroid that is closest to the given instance.
 
