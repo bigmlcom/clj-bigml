@@ -35,7 +35,7 @@
         params (apply api/query-params params)
         form-params (assoc (apply dissoc params api/conn-params)
                       (first origin) origin-id)
-        form-params (if inputs 
+        form-params (if inputs
                       (assoc form-params :input_data inputs)
                       form-params)
         auth-params (select-keys params api/auth-params)]

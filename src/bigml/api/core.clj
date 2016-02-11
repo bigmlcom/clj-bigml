@@ -1,4 +1,4 @@
-;; Copyright 2012 BigML
+;; Copyright 2012, 2016 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -39,6 +39,13 @@
   "Executes the body with development mode enabled."
   [& body]
   `(binding [*connection* (merge *connection* {:dev-mode true})]
+     ~@body))
+
+(defmacro with-mode
+  "Executes the body with development mode enabled or disabled
+   according to the first argument."
+  [dev & body]
+  `(binding [*connection* (merge *connection* {:dev-mode (= ~dev :dev)})]
      ~@body))
 
 (defn query-params
