@@ -16,8 +16,14 @@
 
 (deftest ts01
   (api/with-mode :dev
-    (let [prd (test/create
-               ["source" "dataset" "model" "prediction"]
-               "test/data/iris.csv.gz"
-               {:prediction {"petal width" 0.5}})]
-      (is (= "Iris-setosa" (first (vals (:prediction prd))))))))
+    (doall (map #(let pred (test/create-get-cleanup
+                       ["source" "dataset" "model" "prediction"]
+                       (first %)
+                       (second %))]
+             (is (= (last %) (first (vals (:prediction pred))))))
+          [["test/data/iris.csv.gz"
+                {:prediction {"petal width" 0.5}}
+                "Iris-setosa"]
+           ["test/data/iris-sp-chars.csv"
+            {:prediction {"pétal&width" 0.5}}
+            "Iris-setosa"]]))))
