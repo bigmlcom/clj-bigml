@@ -1,4 +1,4 @@
-;; Copyright 2012 BigML
+;; Copyright 2012, 2016 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [dataset & params]
-  (utils/create :target :model :origin [:dataset dataset] :params params))
+  (#'utils/create :target :model :origin [:dataset dataset] :params params))
 
 (defn list
   "Retrieves a list of models. The optional parameters can include

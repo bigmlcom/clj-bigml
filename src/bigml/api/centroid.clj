@@ -11,7 +11,7 @@
 (defn create
   "Creates a centroid from a cluster. A cluster can be represented through its
   id (e.g., `cluster/123123`), or a map as returned by `get` or `list`.
-  
+
    The inputs may either be a map (field ids to values), or a
    sequence of the inputs fields in the order they appeared during
    training.
@@ -23,7 +23,7 @@
   on failure unless :throw-exceptions is set to false (default is true),
   in which case the HTTP response details are returned as a map on failure."
   [cluster inputs & params]
-  (utils/create :target :centroid
+  (#'utils/create :target :centroid
                 :origin [:cluster cluster]
                 :params params
                 :inputs inputs))

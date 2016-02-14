@@ -17,7 +17,7 @@
                          (throw (Exception. "Inaccessible/wrong resource")))]
     (apply hash-map (flatten (map list input-fields inputs)))))
 
-(defn create
+(defn- create
   "Create a resource from another.
 
    The `target` parameter identifies the type of resource to create,

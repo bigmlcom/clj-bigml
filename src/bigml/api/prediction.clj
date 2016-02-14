@@ -1,4 +1,4 @@
-;; Copyright 2012 BigML
+;; Copyright 2012, 2016 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -27,7 +27,7 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [model inputs & params]
-  (utils/create :target :prediction
+  (#'utils/create :target :prediction
                 :origin [:model model]
                 :params params
                 :inputs inputs))

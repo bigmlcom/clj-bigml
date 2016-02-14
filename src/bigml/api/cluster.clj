@@ -11,7 +11,7 @@
 (defn create
   "Creates a cluster from a dataset. A dataset can be represented through its
   id (e.g., `cluster/123123`), or a map as returned by `get` or `list`.
-  
+
   Accepts the optional creation parameters described in the BigML API docs:
      https://bigml.com/developers/clusters#cl_cluster_arguments
 
@@ -19,7 +19,7 @@
   on failure unless :throw-exceptions is set to false (default is true),
   in which case the HTTP response details are returned as a map on failure."
   [dataset & params]
-  (utils/create :target :cluster :origin [:dataset dataset] :params params))
+  (#'utils/create :target :cluster :origin [:dataset dataset] :params params))
 
 (defn list
   "Retrieves a list of clusters. The optional parameters can include
