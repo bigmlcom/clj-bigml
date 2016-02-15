@@ -23,7 +23,7 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [source & params]
-  (#'utils/create :target :dataset :origin [:source source] :params params))
+  (utils/create :target :dataset :origin [:source source] :params params))
 
 (defn clone
   "Clones a given dataset, represented either as a full resource (as

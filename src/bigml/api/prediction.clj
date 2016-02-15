@@ -27,7 +27,7 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [model inputs & params]
-  (#'utils/create :target :prediction
+  (utils/create :target :prediction
                 :origin [:model model]
                 :params params
                 :inputs inputs))

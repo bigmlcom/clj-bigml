@@ -19,7 +19,7 @@
   on failure unless :throw-exceptions is set to false (default is true),
   in which case the HTTP response details are returned as a map on failure."
   [dataset & params]
-  (#'utils/create :target :cluster :origin [:dataset dataset] :params params))
+  (utils/create :target :cluster :origin [:dataset dataset] :params params))
 
 (defn list
   "Retrieves a list of clusters. The optional parameters can include

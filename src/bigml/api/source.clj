@@ -36,7 +36,7 @@
   create-type)
 
 (defmethod create :url [url & params]
-  (#'utils/create :target :source :origin [:remote url] :params params))
+  (utils/create :target :source :origin [:remote url] :params params))
 
 (defmethod create :file [file & params]
   (let [file (io/file file)

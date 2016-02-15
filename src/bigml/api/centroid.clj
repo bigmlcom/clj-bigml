@@ -23,7 +23,7 @@
   on failure unless :throw-exceptions is set to false (default is true),
   in which case the HTTP response details are returned as a map on failure."
   [cluster inputs & params]
-  (#'utils/create :target :centroid
+  (utils/create :target :centroid
                 :origin [:cluster cluster]
                 :params params
                 :inputs inputs))

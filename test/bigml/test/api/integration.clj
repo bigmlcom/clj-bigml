@@ -1,4 +1,4 @@
-;; Copyright 2012 BigML
+;; Copyright 2012, 2016 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -38,6 +38,10 @@
 (deftest integration
   (test-with-generated-data))
 
+(deftest alt-integration
+  (api/with-dev-mode false
+    (test-with-generated-data)))
+
 (deftest dev-mode-integration
-  (api/with-dev-mode
+  (api/with-dev-mode true
     (test-with-generated-data)))

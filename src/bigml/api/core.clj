@@ -36,16 +36,10 @@
      ~@body))
 
 (defmacro with-dev-mode
-  "Executes the body with development mode enabled."
-  [& body]
-  `(binding [*connection* (merge *connection* {:dev-mode true})]
-     ~@body))
-
-(defmacro with-mode
   "Executes the body with development mode enabled or disabled
-   according to the first argument."
+   according to the first argument, a boolean."
   [dev & body]
-  `(binding [*connection* (merge *connection* {:dev-mode (= ~dev :dev)})]
+  `(binding [*connection* (merge *connection* {:dev-mode ~dev})]
      ~@body))
 
 (defn query-params
@@ -95,7 +89,8 @@
   [resource-type dev-mode params]
   (let [params (assoc params :as :json)
         {:keys [body] :as response}
-        (client/post (resource-type-url resource-type dev-mode) params)]
+        (client/post (resource-type-url resource-type dev-mode)
+                     (assoc params :debug false :debug-body false))]
     (if (client/success? response)
       (with-meta body (dissoc response :body))
       response)))
