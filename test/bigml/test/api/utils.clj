@@ -64,8 +64,8 @@
 
 (defn create-get-cleanup
   "This function wraps create so it does a GET of the last resource
-   returned by create and returns it; additionally, it deletes remotely
-   all created resources."
+   returned by create and returns it; additionally, it deletes
+   all resources created remotely."
   [res-type res-uuid & params]
   (let [resources (apply create res-type res-uuid params)
         result (api/get-final (last resources))]

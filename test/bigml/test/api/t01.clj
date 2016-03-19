@@ -17,7 +17,7 @@
     (doall (csv/read-csv (slurp file)))))
 
 (defn create-get-cleanup
-  "This function takes a sequence of resource to create (e.g.,
+  "This function takes a sequence of resources to create (e.g.,
   [:source :dataset :model] and a prediction to check, which is
   an array whose first item is the inputs to use for the prediction
   and the second the expected outcome."
