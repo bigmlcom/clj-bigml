@@ -29,16 +29,18 @@
                   [:source :dataset :model :prediction] td)]
         (is (= (last td) (first (vals (:prediction pred)))))))))
 
-;; shall we add support for S3 also? e.g., s3://bigml-public/csv/iris.csv
 (deftest ts02
   "Successfully creating a prediction from remote source"
   (api/with-dev-mode false
-    (doseq [td [["https://static.bigml.com/csv/iris.csv"
-                 {:prediction [1.44 0.54 2.2]}
-                 "Iris-setosa"]]]
+    (doseq [test-data [["https://static.bigml.com/csv/iris.csv"
+                        {:prediction [1.44 0.54 2.2]}
+                        "Iris-setosa"]
+                       ["s3://bigml-public/csv/iris.csv"
+                        {:prediction [1.44 0.54 2.2]}
+                        "Iris-setosa"]]]
       (let [pred (test/create-get-cleanup
-                  [:source :dataset :model :prediction] td)]
-        (is (= (last td) (first (vals (:prediction pred)))))))))
+                  [:source :dataset :model :prediction] test-data)]
+        (is (= (last test-data) (first (vals (:prediction pred)))))))))
 
 (deftest ts04
   "Successfully creating a prediction from inline data source"
