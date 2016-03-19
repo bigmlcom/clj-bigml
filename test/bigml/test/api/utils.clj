@@ -43,24 +43,35 @@
          res-uuid
          (if (nil? params) params [params])))
 
- (defn create
+(defn- create-arg-type
+  "This is used to select the proper implementation of the create multimethod"
+  [x & _]
+  (cond (= (type x) (type :keyword)) :single
+        (= (type x) (type [])) :sequence
+        :default :error))
+
+(defmulti create
   "This function creates either a single resource, or a sequence of resources.
-   It returns an array of the UUID of the resource created or an array thereof.
-   res-type is the resource type(s) to create, either a string or an array
-   res-uuid is the uuid of the resource which is used to create the requested
-         resource or the first one of the sequence; it can be a file path/url
-   params is either a list of options for the single-resource case, or
+   It returns the UUID of the resource created or an array thereof.
+   - res-type: resource type(s) to create, a keyword or an array thereof
+   - res-uuid: UUID of the resource which is used to create the requested
+         resource or the first one of the sequence; it can also be a file path/url
+   - params: a list of options for the single-resource case, or
        a map from a resource type (represented by a keyword) and
        another map representing the options to use for that resource type"
+  create-arg-type)
+
+(defmethod create :single
   [res-type res-uuid & params]
-  (do 
-   (if (keyword? res-type)
-     (api/get-final (apply do-verb :create res-type res-uuid params))
-     (reduce
+  (api/get-final (apply do-verb :create res-type res-uuid params)))
+
+(defmethod create :sequence
+  [res-type res-uuid & params]
+  (reduce
       #(conj %1 (:resource
                  (apply create %2 (last %1) (%2 (first params)))))
       [res-uuid]
-      res-type))))
+      res-type))
 
 (defn create-get-cleanup
   "This function wraps create so it does a GET of the last resource
