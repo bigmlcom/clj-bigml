@@ -41,7 +41,8 @@
   [verb res-type res-uuid & params]
   (apply (get-in api-fns [res-type verb])
          res-uuid
-         (if (nil? params) params [params])))
+         (if (nil? params) params [params])
+         ))
 
 (defn- create-arg-type
   "This is used to select the proper implementation of the create multimethod"
@@ -68,17 +69,17 @@
 (defmethod create :sequence
   [res-type res-uuid & params]
   (reduce
-      #(conj %1 (:resource
-                 (apply create %2 (last %1) (%2 (first params)))))
-      [res-uuid]
-      res-type))
+   #(conj %1 (:resource
+              (apply create %2 (last %1) (%2 (first params)))))
+   [res-uuid]
+   res-type))
 
 (defn create-get-cleanup
   "This function wraps create so it does a GET of the last resource
    returned by create and returns it; additionally, it deletes
    all resources created remotely."
-  [res-type res-uuid & params]
-  (let [resources (apply create res-type res-uuid params)
+  [res-type [res-uuid params]]
+  (let [resources (create res-type res-uuid params)
         result (api/get-final (last resources))]
     (doall (pmap api/delete (drop 1 resources)))
     result))

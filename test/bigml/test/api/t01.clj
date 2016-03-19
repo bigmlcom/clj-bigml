@@ -16,14 +16,6 @@
   (with-open [file (io/reader fname)]
     (doall (csv/read-csv (slurp file)))))
 
-(defn create-get-cleanup
-  "This function takes a sequence of resources to create (e.g.,
-  [:source :dataset :model] and a prediction to check, which is
-  an array whose first item is the inputs to use for the prediction
-  and the second the expected outcome."
-  [res-type [uuid params]]
-  (test/create-get-cleanup res-type uuid params))
-
 (deftest ts01
   "Successfully creating predictions from sources of various kind"
   (api/with-dev-mode true
@@ -33,7 +25,7 @@
                 ["test/data/iris-sp-chars.csv"
                  {:prediction [1.44 0.54 2.2]}
                  "Iris-setosa"]]]
-      (let [pred (create-get-cleanup
+      (let [pred (test/create-get-cleanup
                   [:source :dataset :model :prediction] td)]
         (is (= (last td) (first (vals (:prediction pred)))))))))
 
@@ -44,7 +36,7 @@
     (doseq [td [["https://static.bigml.com/csv/iris.csv"
                  {:prediction [1.44 0.54 2.2]}
                  "Iris-setosa"]]]
-      (let [pred (create-get-cleanup
+      (let [pred (test/create-get-cleanup
                   [:source :dataset :model :prediction] td)]
         (is (= (last td) (first (vals (:prediction pred)))))))))
 
@@ -53,7 +45,7 @@
   (doseq [td [[(take-csv "test/data/iris-sp-chars.csv")
                  {:prediction [1.44 0.54 2.2]}
                  "Iris-setosa"]]]
-      (let [pred (create-get-cleanup
+      (let [pred (test/create-get-cleanup
                   [:source :dataset :model :prediction] td)]
         (is (= (last td) (first (vals (:prediction pred))))))))
 
@@ -63,6 +55,6 @@
     (doseq [td [["test/data/diabetes.csv"
                  {:centroid [0 118 84 47 230 45.8 0.551 31 "true"]}
                  "Cluster 0"]]]
-      (let [centroid (create-get-cleanup
+      (let [centroid (test/create-get-cleanup
                       [:source :dataset :cluster :centroid] td)]
         (is (= (last td) (:centroid_name centroid)))))))
