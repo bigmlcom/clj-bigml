@@ -14,7 +14,9 @@
   (:refer-clojure :exclude [list]))
 
 (defn- url? [url]
-  (.isValid (UrlValidator.) url))
+  (or
+   (.isValid (UrlValidator.) url)
+   (re-find (re-pattern "^s3://") url)))
 
 (defn- create-type [v & _]
   (cond (and (coll? v) (coll? (first v))) :collection
