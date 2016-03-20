@@ -16,18 +16,28 @@
   (with-open [file (io/reader fname)]
     (doall (csv/read-csv (slurp file)))))
 
+(defn- create-and-test [resources test-data test-fn]
+  (let [result (test/create-get-cleanup resources test-data)]
+        (is (= (last test-data) (test-fn result)))))
+
+(defn- predicted-value [prediction-map]
+  (first (vals (:prediction prediction-map))))
+
 (deftest ts01
   "Successfully creating predictions from sources of various kind"
   (api/with-dev-mode true
-    (doseq [td [["test/data/iris.csv.gz"
+    (doseq [test-data [["test/data/iris.csv.gz"
                  {:prediction [1.44 0.54 2.2]}
                  "Iris-setosa"]
                 ["test/data/iris-sp-chars.csv"
                  {:prediction [1.44 0.54 2.2]}
+                 "Iris-setosa"]
+                ["test/data/iris-sp-chars.csv"
+                 {:prediction { "000003" 0.5}}
                  "Iris-setosa"]]]
-      (let [pred (test/create-get-cleanup
-                  [:source :dataset :model :prediction] td)]
-        (is (= (last td) (first (vals (:prediction pred)))))))))
+      (create-and-test [:source :dataset :model :prediction]
+                       test-data
+                       predicted-value))))
 
 (deftest ts02
   "Successfully creating a prediction from remote source"
@@ -38,25 +48,25 @@
                        ["s3://bigml-public/csv/iris.csv"
                         {:prediction [1.44 0.54 2.2]}
                         "Iris-setosa"]]]
-      (let [pred (test/create-get-cleanup
-                  [:source :dataset :model :prediction] test-data)]
-        (is (= (last test-data) (first (vals (:prediction pred)))))))))
+      (create-and-test [:source :dataset :model :prediction]
+                       test-data
+                       predicted-value))))
 
 (deftest ts04
   "Successfully creating a prediction from inline data source"
-  (doseq [td [[(take-csv "test/data/iris-sp-chars.csv")
+  (doseq [test-data [[(take-csv "test/data/iris-sp-chars.csv")
                  {:prediction [1.44 0.54 2.2]}
                  "Iris-setosa"]]]
-      (let [pred (test/create-get-cleanup
-                  [:source :dataset :model :prediction] td)]
-        (is (= (last td) (first (vals (:prediction pred))))))))
+    (create-and-test [:source :dataset :model :prediction]
+                     test-data
+                     predicted-value)))
 
 (deftest ts05
   "Successfully creating a centroid and the associated dataset"
   (api/with-dev-mode true
-    (doseq [td [["test/data/diabetes.csv"
+    (doseq [test-data [["test/data/diabetes.csv"
                  {:centroid [0 118 84 47 230 45.8 0.551 31 "true"]}
                  "Cluster 0"]]]
-      (let [centroid (test/create-get-cleanup
-                      [:source :dataset :cluster :centroid] td)]
-        (is (= (last td) (:centroid_name centroid)))))))
+      (create-and-test [:source :dataset :cluster :centroid]
+                       test-data
+                       :centroid_name))))
