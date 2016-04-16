@@ -27,14 +27,21 @@
   "Successfully creating predictions from sources of various kind"
   (api/with-dev-mode true
     (doseq [test-data [["test/data/iris.csv.gz"
-                 {:prediction { "000001" 0.25 "000003" 0.5}}
-                 "Iris-setosa"]
-                ["test/data/iris-sp-chars.csv"
-                 {:prediction [1.44 0.54 2.2]}
-                 "Iris-setosa"]
-                ["test/data/iris-sp-chars.csv"
-                 {:prediction { "000001" 0.25 "000003" 0.5}}
-                 "Iris-setosa"]]]
+                        {:source {"category" "1"}
+                         :prediction {:input_data
+                                      { "000001" 0.25 "000003" 0.5}
+                                      :options
+                                      { :by-field-name true }}}
+                        "Iris-setosa"]
+                       ["test/data/iris-sp-chars.csv"
+                        {:prediction {:input_data [1.44 0.54 2.2]}}
+                        "Iris-setosa"]
+                       ["test/data/iris-sp-chars.csv"
+                        {:prediction {:input_data
+                                      { "000001" 0.25 "000003" 0.5}
+                                      :options
+                                      { :by-field-name true }}}
+                        "Iris-setosa"]]]
       (create-and-test [:source :dataset :model :prediction]
                        test-data
                        predicted-value))))
