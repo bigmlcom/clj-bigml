@@ -32,15 +32,23 @@
    :prediction {:create prediction/create}})
 
 (defn- do-verb
-  "this function is a sort of universal wrapper around individual create
+  "This function is a sort of universal wrapper around individual create
    functions that reside in specific namespaces. it enables the syntax:
      (create source file-path options)
    in place of the less flexible
      (bigml.api.source/create file-path options)"
   [verb res-type res-uuid params]
-  (apply (get-in api-fns [res-type verb])
-          res-uuid
-          (if (nil? params) params [params])))
+  (let [_ (println "do-verb: " verb "-" params)
+        inputs (:input_data params)
+        params (:options params)]
+   (if (nil? inputs)
+     (apply (get-in api-fns [res-type verb])
+           res-uuid
+           (flatten (seq params)))
+     (apply (get-in api-fns [res-type verb])
+           res-uuid
+           inputs
+           (flatten (seq params))))))
 
 (defn- create-arg-type
   "This is used to select the proper implementation of the create multimethod"
