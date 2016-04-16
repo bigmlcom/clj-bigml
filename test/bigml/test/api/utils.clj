@@ -19,8 +19,7 @@
   and BIGML_API_KEY environment variables"
   []
   (let [username (System/getenv "BIGML_USERNAME")
-        api-key (System/getenv "BIGML_API_KEY")
-        _ (println "AUTH:    " username api-key)]
+        api-key (System/getenv "BIGML_API_KEY")]
     (api/make-connection username api-key)))
 
 (def api-fns
@@ -38,11 +37,10 @@
      (create source file-path options)
    in place of the less flexible
      (bigml.api.source/create file-path options)"
-  [verb res-type res-uuid & params]
+  [verb res-type res-uuid params]
   (apply (get-in api-fns [res-type verb])
-         res-uuid
-         (if (nil? params) params [params])
-         ))
+          res-uuid
+          (if (nil? params) params [params])))
 
 (defn- create-arg-type
   "This is used to select the proper implementation of the create multimethod"
@@ -69,10 +67,10 @@
 (defmethod create :sequence
   [res-type res-uuid & params]
   (reduce
-   #(conj %1 (:resource
-              (apply create %2 (last %1) (%2 (first params)))))
-   [res-uuid]
-   res-type))
+    #(conj %1 (:resource
+               (create %2 (last %1) (%2 (first params)))))
+    [res-uuid]
+    res-type))
 
 (defn create-get-cleanup
   "This function wraps create so it does a GET of the last resource
