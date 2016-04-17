@@ -5,7 +5,8 @@
 (ns bigml.api.evaluation
   "Offers functions specific for BigML evaluations.
       https://bigml.com/developers/evaluations"
-  (:require (bigml.api [core :as api]))
+  (:require (bigml.api [core :as api]
+                       [utils :as utils]))
   (:refer-clojure :exclude [list]))
 
 (defn create
@@ -25,7 +26,7 @@
    a map on failure."
   [model dataset & params]
   (let [params (apply api/query-params params)
-        form-params (assoc (apply dissoc params api/conn-params)
+        form-params (assoc (utils/get-form-params-in params)
                       :model (api/resource-id model)
                       :dataset (api/resource-id dataset))
         auth-params (select-keys params api/auth-params)]

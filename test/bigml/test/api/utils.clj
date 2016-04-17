@@ -38,8 +38,7 @@
    in place of the less flexible
      (bigml.api.source/create file-path options)"
   [verb res-type res-uuid params]
-  (let [_ (println "do-verb: " verb "-" params)
-        inputs (:input_data params)
+  (let [inputs (:input_data params)
         params (:options params)]
    (if (nil? inputs)
      (apply (get-in api-fns [res-type verb])
