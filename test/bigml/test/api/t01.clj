@@ -31,14 +31,14 @@
                          :prediction {:input_data
                                       { "000001" 0.25 "000003" 0.5}
                                       :options
-                                      { :by-field-name true }}}
+                                      { :by-field-name false }}}
                         "Iris-setosa"]
                        ["test/data/iris-sp-chars.csv"
                         {:prediction {:input_data [1.44 0.54 2.2]}}
                         "Iris-setosa"]
                        ["test/data/iris-sp-chars.csv"
                         {:prediction {:input_data
-                                      { "000001" 0.25 "000003" 0.5}
+                                      {"sépal.length" 0.25 "pétal&width" 0.5}
                                       :options
                                       { :by-field-name true }}}
                         "Iris-setosa"]]]

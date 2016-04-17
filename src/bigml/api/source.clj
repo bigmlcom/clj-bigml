@@ -10,7 +10,8 @@
   (:require (clojure.java [io :as io])
             (clojure.data [csv :as csv])
             (cheshire [core :as json])
-            (bigml.api [core :as api] [utils :as utils]))
+            (bigml.api [core :as api]
+                       [utils :as utils]))
   (:refer-clojure :exclude [list]))
 
 (defn- url? [url]
@@ -41,26 +42,27 @@
   (utils/create :target :source :origin [:remote url] :params params))
 
 (defmethod create :file [file & params]
-  (let [file (io/file file)
-        params (apply api/query-params params)
-        form-params (apply dissoc params api/conn-params)
-        auth-params (select-keys params api/auth-params)
-        multipart (map (fn [[k v]] {:name (name k)
-                                    :content (if (map? v)
-                                               (json/generate-string v)
-                                               (str v))})
-                       form-params)
-        multipart (conj multipart {:name "file" :content file})]
-    (api/create :source
-                (:dev_mode params)
-                {:multipart multipart
-                 :query-params auth-params})))
+  (let [_ (println "source/create: " params)
+         file (io/file file)
+         params (apply api/query-params params)
+         form-params (utils/get-form-params-in params)
+         auth-params (select-keys params api/auth-params)
+         multipart (map (fn [[k v]] {:name (name k)
+                                     :content (if (map? v)
+                                                (json/generate-string v)
+                                                (str v))})
+                        form-params)
+         multipart (conj multipart {:name "file" :content file})]
+     (api/create :source
+                 (:dev_mode params)
+                 {:multipart multipart
+                  :query-params auth-params})))
 
 (defmethod create :collection [coll & params]
   (with-open [writer (StringWriter.)]
     (csv/write-csv writer coll)
     (let [params (apply api/query-params params)
-          form-params (assoc (apply dissoc params api/conn-params)
+          form-params (assoc (utils/get-form-params-in params)
                         :data (str writer))
           auth-params (select-keys params api/auth-params)]
       (api/create :source

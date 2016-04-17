@@ -28,9 +28,9 @@
    a map on failure."
   [model inputs & params]
   (utils/create :target :prediction
-                :origin [:model model]
-                :params params
-                :inputs inputs))
+                 :origin [:model model]
+                 :params params
+                 :inputs inputs))
 
 (defn list
   "Retrieves a list of predictions. The optional parameters can include
