@@ -12,7 +12,7 @@
   "Successfully creating a prediction in DEV mode"
   (api/with-dev-mode true
     (let [test-data ["test/data/iris.csv.gz"
-                     {:prediction [1.44 0.54 2.2]}
+                     {:prediction {:input_data [1.44 0.54 2.2]}}
                      "Iris-setosa"]
           prediction (test/create-get-cleanup
                       [:source :dataset :model :prediction] test-data)]
