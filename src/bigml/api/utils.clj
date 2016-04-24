@@ -8,33 +8,53 @@
   (:require [clojure.set :as set])
   (:require (bigml.api [core :as api])))
 
-(defn- if-contains 
-  "Returns the passed map m if it contains the given key k, otherwise nil"
-  [m k] (and (k m) m))
+(defn resource-type
+  "Returns the resource type of the specified resource.
+   The resource can be specified through:
+    - its full UUID, e.g., 'model/12234567890';
+    - a minimal map-representation, e.g., { :resource '...' };
+    - a full JSON representation."
+  [resource]
+  (let [resource (or (:resource resource) (str resource))]
+    (first (clojure.string/split resource #"/"))))
+
+(defn- if-contains
+  "Returns the passed map m if it contains the given keypath ks,
+  otherwise nil. A keypath is a sequence of keys for recursive lookup."
+  [m ks]
+  (and (get-in m ks) m))
 
 (defn normalized-resource
   "Makes sure the passed resource contains enough information for input
    normalization (i.e., :input_fields and additionally :restype/field
    when by-name is true. If it does not, then the resoure is fetched."
   [resource by-name]
-  (or (and (if-contains resource :input_fields)
-            (or (if-contains resource :fields)
+  (let [ res-type (resource-type resource)]
+   (or (and (if-contains resource [:input_fields])
+            (or (if-contains resource [(keyword res-type) :fields])
                 (and (not by-name) resource)))
-       (api/get-final resource)))
+       (api/get-final resource))))
+
+(defn- field-name-mapping
+  "Returns a map that associates the passed resource's field names to
+  the respective field IDs. E.g.:
+      {'petal width' '000001' 'sepal length '000002' }"
+  [resource]
+  (let [res-type (resource-type resource)]
+    (reduce #(assoc %1 (:name (second %2)) (first %2))
+            {}
+            (seq (:fields ((keyword res-type) resource))))))
 
 (defn normalized-inputs
   "Converts inputs to their map normal form if provided as list,
    in which case they are associated to input fields in the order
    the latter appeared during training."
   [resource inputs by-name]
-  (let [_ (println "INPUTS: " inputs)
-        resource ((or (normalized-resource resource)
-                      (throw (Exception. "Inaccessible/wrong resource"))))
-        input-fields (:input_fields resource)
-
-        _ (println "IN-FILEDS" (clojure.string/split (:resource (api/get-final resource)resource) #"/"))]
+  (let [resource (or (normalized-resource resource by-name)
+                      (throw (Exception. "Inaccessible/wrong resource")))
+        input-fields (:input_fields resource)]
     (if (and (map? inputs) by-name)
-      (set/rename-keys inputs (reduce #(assoc %1 (:name (second %2)) (first %2)) {} (seq (:fields (api/get-final resource)))))
+      (set/rename-keys inputs (field-name-mapping resource))
       (apply hash-map (flatten (map list input-fields inputs))))))
 
 (defn get-form-params-in
@@ -54,12 +74,14 @@
      (create :target :prediction :origin [:model '123123'] :inputs {...}"
   [& {:keys [target origin params inputs]}]
   (let [origin-id (api/resource-id (peek origin))
-        by-name (if (coll? params) (:by-field-name (apply hash-map params)) false)
-        _ (println "BYNAME: " by-name)
-        inputs (if (and inputs (or (not (map? inputs)) by-name) (coll? inputs))
+        by-name (if (coll? params)
+                  (:by-field-name (apply hash-map params))
+                  false)
+        inputs (if (and inputs
+                        (or (not (map? inputs)) by-name)
+                        (coll? inputs))
                  (normalized-inputs origin-id inputs by-name)
                  inputs)
-        _ (println "NORMALIZED: " inputs)
         params (apply api/query-params params)
         form-params (assoc (get-form-params-in params)
                       (first origin) origin-id)

@@ -92,9 +92,9 @@
         root-fn (or (node-fn (get-root model))
                     (throw (Exception. "Invalid or unsupported model")))
         obj-field (keyword (first (:objective_fields model)))]
-    (fn [inputs & {:keys [details]}]
+    (fn [inputs & {:keys [details by-name]}]
       (let [inputs (if (and (not (map? inputs)) (coll? inputs))
-                     (utils/normalized-inputs model inputs)
+                     (utils/normalized-inputs model inputs by-name)
                      inputs)
             result (root-fn inputs)]
         (if details
