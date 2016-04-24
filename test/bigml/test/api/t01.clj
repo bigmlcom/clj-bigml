@@ -33,12 +33,21 @@
                                       :options
                                       { :by-field-name false }}}
                         "Iris-setosa"]
+                       ["test/data/iris.csv.gz"
+                        {:source {"category" "1"}
+                         :prediction {:input_data
+                                      { "petal length" 2.4
+                                        "sepal width" 3.9 }
+                                      :options
+                                      { :by-field-name true }}}
+                        "Iris-setosa"]
                        ["test/data/iris-sp-chars.csv"
                         {:prediction {:input_data [1.44 0.54 2.2]}}
                         "Iris-setosa"]
                        ["test/data/iris-sp-chars.csv"
                         {:prediction {:input_data
-                                      {"sépal.length" 0.25 "pétal&width" 0.5}
+                                      {"sépal.length" 0.25
+                                       "pétal&width" 0.5}
                                       :options
                                       { :by-field-name true }}}
                         "Iris-setosa"]]]
@@ -50,10 +59,10 @@
   "Successfully creating a prediction from remote source"
   (api/with-dev-mode false
     (doseq [test-data [["https://static.bigml.com/csv/iris.csv"
-                        {:prediction [1.44 0.54 2.2]}
+                        {:prediction {:input_data [1.44 0.54 2.2]}}
                         "Iris-setosa"]
                        ["s3://bigml-public/csv/iris.csv"
-                        {:prediction [1.44 0.54 2.2]}
+                        {:prediction {:input_data [1.44 0.54 2.2]}}
                         "Iris-setosa"]]]
       (create-and-test [:source :dataset :model :prediction]
                        test-data
@@ -62,7 +71,7 @@
 (deftest ts04
   "Successfully creating a prediction from inline data source"
   (doseq [test-data [[(take-csv "test/data/iris-sp-chars.csv")
-                 {:prediction [1.44 0.54 2.2]}
+                 {:prediction {:input_data [1.44 0.54 2.2]}}
                  "Iris-setosa"]]]
     (create-and-test [:source :dataset :model :prediction]
                      test-data
@@ -72,7 +81,7 @@
   "Successfully creating a centroid and the associated dataset"
   (api/with-dev-mode true
     (doseq [test-data [["test/data/diabetes.csv"
-                 {:centroid [0 118 84 47 230 45.8 0.551 31 "true"]}
+                 {:centroid {:input_data [0 118 84 47 230 45.8 0.551 31 "true"]}}
                  "Cluster 0"]]]
       (create-and-test [:source :dataset :cluster :centroid]
                        test-data
