@@ -36,3 +36,57 @@
 (deftest normalized-resource-test-4
   (let [r {:resource "sample/uuid"  :input_fields "" :fields ""}]
     (is (= (normalized-resource-test r true) r))))
+
+(deftest field-name-mapping-test-1
+  (let [r {:resource "model/uuid"
+           :model {:fields
+                   { "01" { :name "a" }
+                     "02" { :name "b" }}}}]
+    (is (.equals (#'bigml.api.utils/field-name-mapping r)
+                  {"a" "01" "b" "02"}))))
+
+(deftest field-name-mapping-test-2
+  (let [r {:resource "ensemble/uuid"
+           :ensemble {:fields
+                   { "01" { :name "a" }
+                     "02" { :name "b" }}}}]
+    (is (.equals (#'bigml.api.utils/field-name-mapping r)
+                  {"a" "01" "b" "02"}))))
+
+(deftest field-name-mapping-test-3
+  (let [r {:resource "model/uuid"}]
+    (is (.equals (#'bigml.api.utils/field-name-mapping r) {}))))
+
+(deftest field-name-mapping-test-4
+  (let [r {}]
+    (is (.equals (#'bigml.api.utils/field-name-mapping r) {}))))
+
+(deftest resource-type-test-1
+  (is (= (utils/resource-type "model/12345") "model")))
+
+(deftest resource-type-test-2
+  (is (= (utils/resource-type {:resource "model/12345"}) "model")))
+
+(deftest resource-type-test-3
+  (is (= (utils/resource-type {}) "{}")))
+
+(deftest resource-type-test-4
+  (is (= (utils/resource-type "") "")))
+
+(deftest if-contains-test-1
+  (let [r {:0 "0" :1 { :2 "2" :3 "3"}}]
+      (is (= (#'utils/if-contains r [:0]) r))))
+
+(deftest if-contains-test-2
+  (let [r {:0 "0" :1 { :2 "2" :3 { :4 "4" }}}]
+      (is (= (#'utils/if-contains r [:1 :3 :4]) r))))
+
+(deftest if-contains-test-3
+  (let [r {:0 "0" :1 { :2 "2" :3 "3"}}]
+      (is (= (#'utils/if-contains r [:5]) nil))))
+
+(deftest if-contains-test-4
+  (is (= (#'utils/if-contains {} [:0]) nil)))
+
+(deftest if-contains-test-5
+  (is (= (#'utils/if-contains "" [:5]) nil)))
