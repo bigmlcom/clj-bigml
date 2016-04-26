@@ -299,7 +299,7 @@ the dataset.  A clustering is an example of unsupervised learning.
 
 ### Centroids
 
-A [centroid](https://bigml.com/developers/clusters) represents the
+A [centroid](https://bigml.com/developers/centroids) represents the
 center of a cluster and is computed using the mean for each numeric
 field and the mode for each categorical field.  You can create a
 centroid for a given cluster and a new data instance to identify the
