@@ -15,9 +15,8 @@
   (:refer-clojure :exclude [list]))
 
 (defn- url? [url]
-  (or
-   (.isValid (UrlValidator.) url)
-   (re-find (re-pattern "^s3://") url)))
+  (or (.isValid (UrlValidator.) url)
+      (re-find (re-pattern "^s3://") url)))
 
 (defn- create-type [v & _]
   (cond (and (coll? v) (coll? (first v))) :collection
@@ -55,7 +54,7 @@
     (api/create :source
                 (:dev_mode params)
                 {:multipart multipart
-                  :query-params auth-params})))
+                 :query-params auth-params})))
 
 (defmethod create :collection [coll & params]
   (with-open [writer (StringWriter.)]

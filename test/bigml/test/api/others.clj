@@ -4,38 +4,36 @@
 
 (ns bigml.test.api.others
   "Contains unit tests for various functions."
-  (:require (bigml.api [utils :as utils]))
-  (:require (bigml.api [core :as api]))
+  (:require (bigml.api [utils :as utils]
+                       [core :as api]))
   (:use clojure.test))
-
-(defn normalized-resource-test 
-  "Tests for utils/normalized-resource. Each test sample shall contain:
-    - the resource to normalize (a map);
-    - the by-name flag (true of false);
-    - the expected outcome (true or false)."
-  [resource by-name]
-  (try
-    (utils/normalized-resource resource
-                               by-name)
-    (catch Exception e (if (.contains (.getMessage e) "404")
-                         "exception"
-                         (throw e)))))
 
 (deftest normalized-resource-test-1
   (let [r {:resource "sample/uuid"}]
-    (is (= (normalized-resource-test r false) "exception"))))
+    (is (thrown-with-msg? Exception #"404"
+                          (utils/normalized-resource r false)))))
 
 (deftest normalized-resource-test-2
   (let [r {:resource "sample/uuid" :input_fields ""}]
-    (is (= (normalized-resource-test r false) r))))
+    (is (= (utils/normalized-resource r false) r))))
 
 (deftest normalized-resource-test-3
   (let [r {:resource "sample/uuid"  :input_fields ""}]
-    (is (= (normalized-resource-test r true) "exception"))))
+    (is (thrown-with-msg? Exception #"404"
+                          (utils/normalized-resource r true)))))
 
 (deftest normalized-resource-test-4
-  (let [r {:resource "sample/uuid"  :input_fields "" :fields ""}]
-    (is (= (normalized-resource-test r true) r))))
+  (let [r {:resource "sample/uuid"  :input_fields "" :sample {:fields ""}}]
+    (is (= (utils/normalized-resource r true) r))))
+
+(deftest normalized-resource-test-5
+  (let [r {:resource "sample/uuid"  :input_fields "" :sample {:fields ""}}]
+    (is (= (utils/normalized-resource r false) r))))
+
+(deftest normalized-resource-test-6
+  (let [r {:resource "sample/uuid"  :input_fields "" :samplee {:fields ""}}]
+    (is (thrown-with-msg? Exception #"404"
+                          (utils/normalized-resource r true) r))))
 
 (deftest field-name-mapping-test-1
   (let [r {:resource "model/uuid"
@@ -73,20 +71,20 @@
 (deftest resource-type-test-4
   (is (= (utils/resource-type "") "")))
 
-(deftest if-contains-test-1
+(deftest get-keypath-test-1
   (let [r {:0 "0" :1 { :2 "2" :3 "3"}}]
-      (is (= (#'utils/if-contains r [:0]) r))))
+      (is (= (#'utils/get-keypath r [:0]) r))))
 
-(deftest if-contains-test-2
+(deftest get-keypath-test-2
   (let [r {:0 "0" :1 { :2 "2" :3 { :4 "4" }}}]
-      (is (= (#'utils/if-contains r [:1 :3 :4]) r))))
+      (is (= (#'utils/get-keypath r [:1 :3 :4]) r))))
 
-(deftest if-contains-test-3
+(deftest get-keypath-test-3
   (let [r {:0 "0" :1 { :2 "2" :3 "3"}}]
-      (is (= (#'utils/if-contains r [:5]) nil))))
+      (is (= (#'utils/get-keypath r [:5]) nil))))
 
-(deftest if-contains-test-4
-  (is (= (#'utils/if-contains {} [:0]) nil)))
+(deftest get-keypath-test-4
+  (is (= (#'utils/get-keypath {} [:0]) nil)))
 
-(deftest if-contains-test-5
-  (is (= (#'utils/if-contains "" [:5]) nil)))
+(deftest get-keypath-test-5
+  (is (= (#'utils/get-keypath "" [:5]) nil)))
