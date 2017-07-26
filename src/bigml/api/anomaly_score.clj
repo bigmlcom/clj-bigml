@@ -10,9 +10,9 @@
   (:refer-clojure :exclude [list]))
 
 (defn create
-  "Creates an anomaly detector from an anomaly detector. A detector
-  can be represented through its id (e.g., `anomaly/123123`), or a map
-  as returned by `get` or `list`.
+  "Creates an anomaly score from an anomaly detector and input data. A
+  detector can be represented through its id (e.g., `anomaly/123123`),
+  or a map as returned by `get` or `list`.
 
   The inputs may either be a map (field ids to values), or a sequence
   of the inputs fields in the order they appeared during training.
