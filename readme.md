@@ -10,7 +10,7 @@
 
 For [Leiningen](https://github.com/technomancy/leiningen):
 
-[![Clojars Project](https://img.shields.io/clojars/v/bigml/clj-bigml.svg)]
+[![Clojars Project](http://clojars.org/bigml/clj-bigml/latest-version.svg)]
 (https://clojars.org/bigml/clj-bigml)
 
 ## Overview
