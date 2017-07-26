@@ -42,6 +42,8 @@ following namespaces are already required:
                      [model :as model]
                      [cluster :as cluster]
                      [centroid :as centroid]
+                     [anomaly-detector :as anomaly-detector]
+                     [anomaly-score :as anomaly-score]
                      [prediction :as prediction]
                      [evaluation :as evaluation]])
 ```
@@ -311,6 +313,48 @@ cluster's centroid that is closest to the given instance.
                                                   "000001" 3.0
                                                   "000002" 6.6
                                                   "000003" 2.1})))
+```
+
+### Anomaly Detectors
+
+An [anomaly detector](https://bigml.com/api/anomalies) helps find
+unusual instances in your data.
+
+```clojure
+(def iris-anomaly-detector
+  (api/get-final (anomaly-detector/create iris-dataset)))
+```
+
+### Anomaly Scores
+
+An [anomaly score](https://bigml.com/api/anomalyscores) captures how
+strange a data point appears to be given an anomaly detector within a
+0-1 range. Scores above 0.6 can generally be considered unusual.
+
+```clojure
+(def iris-anomaly-score
+    (api/get-final (anomaly-score/create iris-anomaly-detector
+                                         {"000000" 7.6
+                                          "000001" 3.0
+                                          "000002" 6.6
+                                          "000003" 2.1})))
+```
+
+Alternatively, we can use the detector to create a local Clojure fn
+for generating scores.
+
+```clojure
+(def iris-local-detector
+  (anomaly-score/detector iris-anomaly-detector))
+
+(iris-local-detector {"000000" 5.2,
+                      "000001" 3.5,
+                      "000002" 1.5,
+                      "000003" 0.2,
+                      "000004" "Iris-virginica"}) ;; --> 0.6125
+
+(iris-local-detector [5.2 3.5 1.5 0.2 "Iris-virginica"]) ;; --> 0.6125
+```
 
 ### Clean up resources
 

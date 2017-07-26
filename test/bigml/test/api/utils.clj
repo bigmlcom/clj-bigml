@@ -1,4 +1,4 @@
-;; Copyright 2016 BigML
+;; Copyright 2016, 2017 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -86,5 +86,5 @@
   [res-type [res-uuid params]]
   (let [resources (create res-type res-uuid params)
         result (api/get-final (last resources))]
-    (doall (pmap api/delete (drop 1 resources)))
+    (dorun (pmap api/delete (drop 1 resources)))
     result))

@@ -1,4 +1,4 @@
-;; Copyright 2012, 2016 BigML
+;; Copyright 2012-2017 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -15,8 +15,9 @@
   (:refer-clojure :exclude [list]))
 
 (defn- url? [url]
-  (or (.isValid (UrlValidator.) url)
-      (re-find (re-pattern "^s3://") url)))
+  (boolean (when url
+             (or (.isValid (UrlValidator.) url)
+                 (re-find (re-pattern "^s3://") url)))))
 
 (defn- create-type [v & _]
   (cond (and (coll? v) (coll? (first v))) :collection

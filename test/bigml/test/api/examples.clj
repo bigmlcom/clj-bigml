@@ -1,4 +1,4 @@
-;; Copyright 2012 BigML
+;; Copyright 2012-2017 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -53,7 +53,7 @@
       (println "Cleaning up by deleting the resources from BigML")
       (api/delete source)
       (api/delete dataset)
-      (doall (pmap api/delete models)))))
+      (dorun (pmap api/delete models)))))
 
 (defn- train-and-test-example []
   ;; This example uses the well-known iris dataset

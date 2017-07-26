@@ -1,4 +1,4 @@
-;; Copyright 2016 BigML
+;; Copyright 2016, 2017 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -33,7 +33,7 @@
 (deftest normalized-resource-test-6
   (let [r {:resource "sample/uuid"  :input_fields "" :samplee {:fields ""}}]
     (is (thrown-with-msg? Exception #"404"
-                          (utils/normalized-resource r true) r))))
+                          (utils/normalized-resource r true)))))
 
 (deftest field-name-mapping-test-1
   (let [r {:resource "model/uuid"

@@ -1,4 +1,4 @@
-;; Copyright 2012, 2016 BigML
+;; Copyright 2012-2017 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -9,7 +9,7 @@
   (:use clojure.test))
 
 (deftest ts01
-  "Successfully creating a prediction in DEV mode"
+  ;; Creating a prediction in DEV mode
   (api/with-dev-mode true
     (let [test-data ["test/data/iris.csv.gz"
                      {:prediction {:input_data [1.44 0.54 2.2]}}

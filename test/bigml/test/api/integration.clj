@@ -1,4 +1,4 @@
-;; Copyright 2012, 2016 BigML
+;; Copyright 2012-2017 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -24,7 +24,7 @@
         predictor (prediction/predictor model)
         cluster (api/get-final (cluster/create dataset))
         centroid (centroid/create cluster (first data))]
-    (doall (pmap api/delete
+    (dorun (pmap api/delete
                  [source dataset model pred eval cluster centroid]))
     (is (== 10 (predictor [8 2]) (predictor [5 5])))
     (is source)

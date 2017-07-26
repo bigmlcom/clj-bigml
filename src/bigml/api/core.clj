@@ -1,11 +1,11 @@
-;; Copyright 2012, 2016 BigML
+;; Copyright 2012-2017 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.api.core
   "Offers generic functions for interacting with BigML resources."
   (:require (clj-http [client :as client]))
-  (:refer-clojure :exclude [get list]))
+  (:refer-clojure :exclude [get list update]))
 
 (def ^:dynamic *connection* nil)
 
@@ -57,7 +57,7 @@
                     (clojure.core/get env "BIGML_API_KEY"))
         dev_mode (or dev_mode
                      (:dev-mode *connection*)
-                     (Boolean/valueOf (clojure.core/get env "BIGML_DEV_MODE")))]
+                     (Boolean/valueOf (str (clojure.core/get env "BIGML_DEV_MODE"))))]
     (if (and username api_key)
       (assoc params :username username :api_key api_key :dev_mode dev_mode)
       (throw (Exception. "No authentication defined.")))))
