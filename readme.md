@@ -49,9 +49,9 @@ following namespaces are already required:
 
 ## Authentication
 
-To use this library you'll need an [account with BigML]
-(https://bigml.com/accounts/register/), your user name, and your
-[API key](https://bigml.com/account/apikey).
+To use this library you'll need
+an [account with BigML](https://bigml.com/accounts/register/), your
+user name, and your [API key](https://bigml.com/account/apikey).
 
 While new BigML accounts come with some free credits, you may avoid
 spending your credits by enabling development mode.  Development mode
@@ -95,14 +95,13 @@ development mode as parameters when calling client functions:
 
 ## Resources
 
-The BigML API provides access to a growing number of [ML resources]
-(https://bigml.com/developers/overview#ov_bigml_resources), including
-such resources as
-[sources](https://bigml.com/developers/sources),
+The BigML API provides access to a growing number
+of [ML resources](https://bigml.com/developers/overview#ov_bigml_resources),
+including such resources as [sources](https://bigml.com/developers/sources),
 [datasets](https://bigml.com/developers/datasets),
 [models](https://bigml.com/developers/models), etc.
-For more about them, see the [tutorial videos on YouTube]
-(http://www.youtube.com/playlist?list=PL16FC91153F8C47A7&feature=plcp).
+For more about them, see the
+[tutorial videos on YouTube](http://www.youtube.com/playlist?list=PL16FC91153F8C47A7&feature=plcp).
 
 `bigml.api.core` provides a set of functions that act as primitives
 for all the resource types:
@@ -151,8 +150,7 @@ A variety of compression formats are also supported such as `.Z`
 (source/create "https://static.bigml.com/csv/iris.csv")
 ```
 
-BigML also supports [s3, azure, and odata URLs]
-(http://blog.bigml.com/2012/12/07/bigmler-in-da-cloud-machine-learning-made-even-easier/).
+BigML also supports [s3, azure, and odata URLs](http://blog.bigml.com/2012/12/07/bigmler-in-da-cloud-machine-learning-made-even-easier/).
 
 **Inline sources** are created directly from Clojure data:
 
@@ -176,10 +174,10 @@ datasets and contain statistical summarizations for each field (or
 column) in the data.  `bigml.api.dataset/create` makes dataset
 creation convenient.
 
-In this example, from the well known [Iris data]
-(http://en.wikipedia.org/wiki/Iris_flower_data_set) we create a
-source, wait for completion, initiate a dataset, and wait for its
-completion.
+In this example, from the well
+known [Iris data](http://en.wikipedia.org/wiki/Iris_flower_data_set)
+we create a source, wait for completion, initiate a dataset, and wait
+for its completion.
 
 ```clojure
 (def iris-source
@@ -251,9 +249,8 @@ The local prediction fn will also accept `:details` as an optional
 parameter.  When true the fn will return extra information about the
 prediction.  This includes the number of training instances that
 reached this point in the tree, their objective field distribution,
-and the
-[confidence](https://bigml.com/developers/predictions#p_confidence) of
-the prediction.
+and the [confidence](https://bigml.com/developers/predictions#p_confidence)
+of the prediction.
 
 ```clojure
 (iris-local-predictor [7.6 3.0 6.6 2.1] :details true)
