@@ -44,7 +44,8 @@ following namespaces are already required:
                      [anomaly-detector :as anomaly-detector]
                      [anomaly-score :as anomaly-score]
                      [prediction :as prediction]
-                     [evaluation :as evaluation]])
+                     [evaluation :as evaluation]
+                     [script :as script]])
 ```
 
 ## Authentication
@@ -352,6 +353,34 @@ for generating scores.
 (iris-local-detector [5.2 3.5 1.5 0.2 "Iris-virginica"]) ;; --> 0.6125
 ```
 
+### Scripts
+
+A [script](https://bigml.com/api/scripts) is compiled
+source code written in WhizzML, BigML's custom scripting
+language for automating Machine Learning workflows.
+
+The source code itself can be provided as a string:
+
+```clojure
+(def simple-script
+   (api/get-final (script/create "(define n (+ k 1))"
+                          :name "Add one"
+                          :inputs [{:name "k" :type "number" :default 0}]
+                          :outputs [{:name "n" :type "number"}])))
+```
+
+Alternatively, you can provide an input stream from which the source
+code will be read:
+
+```clojure
+(def simple-script
+   (api/get-final (script/create (clojure.java.io/input-stream "/path/to/source-code.whizzml")
+                          :name "Add one"
+                          :inputs [{:name "k" :type "number" :default 0}]
+                          :outputs [{:name "n" :type "number"}])))
+```
+
+
 ### Clean up resources
 
 If you've been following along in your REPL, you can clean up the
@@ -360,7 +389,7 @@ artifacts generated in these examples like so:
 ```clojure
 (mapv api/delete [iris-source iris-dataset iris-model
                   iris-remote-prediction iris-evaluation
-                  iris-cluster iris-centroid])
+                  iris-cluster iris-centroid simple-script])
 ```
 
 ## More Examples

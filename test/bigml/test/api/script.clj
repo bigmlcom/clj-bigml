@@ -4,7 +4,8 @@
 
 (ns bigml.test.api.script
   (:require (bigml.api [core :as api]
-                       [script :as script]))
+                       [script :as script])
+            (clojure.java [io :as io]))
   (:use clojure.test))
 
 (defn- create-and-test [artifact & {:as params}]
@@ -27,4 +28,4 @@
   (testing "Script creation from string"
     (create-and-test "(define n 1)"))
   (testing "Script creation from stream"
-    (create-and-test (java.io.FileInputStream. "test/data/script.whizzml"))))
+    (create-and-test (io/input-stream "test/data/script.whizzml"))))

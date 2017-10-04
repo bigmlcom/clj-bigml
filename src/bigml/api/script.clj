@@ -5,7 +5,8 @@
 (ns bigml.api.script
   "Offers functions specific for BigML datasets.
       https://bigml.com/developers/datasets"
-  (:require (bigml.api [core :as api] [utils :as utils]))
+  (:require (bigml.api [core :as api]
+                       [utils :as utils]))
   (:refer-clojure :exclude [list]))
 
 (defn create
@@ -21,7 +22,6 @@
    is true), in which case the HTTP response details are returned as
    a map on failure."
   [source-code & params]
-  (println source-code)
   (let [source-code (if (string? source-code) source-code (slurp source-code))
         params (concat params [:source_code source-code])]
     (utils/create :target :script :params params)))
