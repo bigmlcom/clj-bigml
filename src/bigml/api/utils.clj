@@ -1,4 +1,4 @@
-;; Copyright 2016 BigML
+;; Copyright 2016, 2017 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -83,8 +83,10 @@
                  (normalized-inputs origin-id inputs by-name)
                  inputs)
         params (apply api/query-params params)
-        form-params (assoc (get-form-params-in params)
-                      (first origin) origin-id)
+        form-params (get-form-params-in params)
+        form-params (if origin
+                      (assoc form-params (first origin) origin-id)
+                      form-params)
         form-params (if inputs
                       (assoc form-params :input_data inputs)
                       form-params)
